@@ -1,0 +1,121 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    padding: 18px; /* Reduzido em 10% */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px; /* Reduzido em 10% */
+    border: 1.8px solid #a5a5a5; /* Reduzido em 10% */
+    border-radius: 7.2px; /* Reduzido em 10% */
+    box-shadow: -1.8px 1.8px 12.6px 12.6px rgba(0, 0, 0, 0.1); /* Reduzido em 10% */
+    background-color: #fff;
+    padding: 18px; /* Reduzido em 10% */
+}
+
+.sidebar {
+    width: 135px; /* Reduzido em 10% */
+    text-align: center;
+}
+
+.sidebar img {
+    width: 135px; /* Reduzido em 10% */
+    height: 135px; /* Reduzido em 10% */
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    padding: 18px; /* Reduzido em 10% */
+    border-radius: 7.2px; /* Reduzido em 10% */
+    box-shadow: 0 1.8px 9px rgba(0, 0, 0, 0.1); /* Reduzido em 10% */
+    max-width: 360px; /* Reduzido em 10% */
+    width: 100%;
+}
+
+.file-options {
+    margin-bottom: 18px; /* Reduzido em 10% */
+    display: flex;
+    flex-direction: row;  /* Alinha na horizontal */
+    gap: 18px; /* Reduzido em 10% */
+    justify-content: center;
+}
+
+.custom-file-label {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 3.6px; /* Reduzido em 10% */
+    cursor: pointer;
+    text-align: center;
+    width: 135px; /* Reduzido em 10% */
+    white-space: nowrap;
+    overflow: hidden; /* Esconde o texto que ultrapassa a largura */
+    text-overflow: ellipsis; /* Adiciona '...' ao final do texto longo */
+    padding: 10px; /* Espaçamento interno para melhorar a aparência */
+}
+
+.custom-file-label:hover {
+    background-color: #0056b3;
+}
+
+.config-options {
+    display: flex;
+    gap: 18px; /* Reduzido em 10% */
+    margin-bottom: 18px; /* Reduzido em 10% */
+}
+
+.config-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4.5px; /* Reduzido em 10% */
+}
+
+label {
+    font-weight: bold;
+    color: #333;
+}
+
+input[type="number"] {
+    width: 135px; /* Reduzido em 10% */
+    padding: 4.5px; /* Reduzido em 10% */
+    font-size: 14.4px; /* Reduzido em 10% */
+    border: 1px solid #ccc;
+    border-radius: 3.6px; /* Reduzido em 10% */
+}
+
+button {
+    padding: 9px 18px; /* Reduzido em 10% */
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 3.6px; /* Reduzido em 10% */
+    cursor: pointer;
+    width: 180px; /* Reduzido em 10% */
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#gerar-btn {
+    padding: 13.5px 31.5px; /* Reduzido em 10% */
+    font-size: 16.2px; /* Reduzido em 10% */
+    width: 288px; /* Reduzido em 10% */
+}

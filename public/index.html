@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FrameCutter</title>
+    <link rel="stylesheet" href="styles.css">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';">
+</head>
+<body>
+    
+<div class="container">
+
+    <div class="sidebar">
+        <img src="icon.png" alt="Icon" class="icon">
+    </div>
+
+    <div class="main-content">
+
+        <!-- Botões de Select File e Destination -->
+        <div class="file-options">
+            <label for="select-file" id="select-file-label" class="custom-file-label">Select File</label>
+            <input type="file" id="select-file" style="display: none;" accept=".mp4, .avi, .mkv">
+            
+            <label for="destination" id="label-destination" class="custom-file-label">Destination</label>
+            <input type="file" id="destination" style="display: none;">
+        </div>
+
+        <!-- Configurações de FPS e Quality -->
+        <div class="config-options">
+            <div class="config-group">
+                <label for="fps-number">Fps:</label>
+                <input type="number" id="fps-number" name="fps-number" min="1" max="24" step="1" value="2">
+            </div>
+
+            <div class="config-group">
+                <label for="quality-number">Quality:</label>
+                <input type="number" id="quality-number" name="quality-number" min="1" max="5" step="1" value="2">
+            </div>
+        </div>
+
+        <!-- Botão Gerar -->
+        <button id="gerar-btn">Gerar</button>
+
+    </div>
+
+</div>
+
+<script src="../src/renderer.js"></script>
+</body>
+</html>
+
