@@ -1,16 +1,20 @@
 {
   "name": "framecuter-html",
   "version": "1.0.0",
-  "main": "src/index.js",
+  "main": "dist/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "build": "tsc",
+    "start": "npm run build && electron ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "electron": "^32.0.1"
+    "@types/electron": "^1.6.10",
+    "@types/node": "^22.5.0",
+    "electron": "^32.0.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
   }
 }
