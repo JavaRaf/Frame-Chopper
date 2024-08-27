@@ -14,6 +14,7 @@ body {
     height: 100vh;
 }
 
+
 .container {
     display: flex;
     align-items: center;
@@ -31,9 +32,14 @@ body {
     text-align: center;
 }
 
+
 .sidebar img {
     width: 135px; /* Reduzido em 10% */
     height: 135px; /* Reduzido em 10% */
+}
+
+.icon-upload {
+    cursor: pointer;
 }
 
 .main-content {

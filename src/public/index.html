@@ -5,14 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FrameCutter</title>
     <link rel="stylesheet" href="styles.css">
+
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';">
+
 </head>
 <body>
     
 <div class="container">
 
     <div class="sidebar">
-        <img src="icon.png" alt="Icon" class="icon">
+        <h5 id="drop-file">Drop file here</h5> <!-- Adicionado o ID file-name -->
+        <img id="icon-upload" src="upload-icon.png" alt="Icon" class="icon">
     </div>
 
     <div class="main-content">
@@ -46,7 +49,7 @@
 
 </div>
 
-<script src=""></script>
+<script src="../renderer.js"></script>
+
 </body>
 </html>
-

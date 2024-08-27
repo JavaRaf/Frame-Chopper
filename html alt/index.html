@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <div class="main-container">
+        <div class="upload-section">
+            <label for="input">
+                <p>Click or drop your video here</p>
+                <img src="upload-icon.png" alt="upload-icon">
+                <input type="file" name="file" hidden id="input">
+            </label>
+        </div>
+
+        <div class="options-section">
+            <div class="dist">
+                <label for="dist-file">
+                    <div class="path">
+                        <p>Dist</p>
+                        <span id="file-name">./...</span>
+                    </div>
+                    <input type="file" name="destination" hidden id="dist-file">
+                </label>
+            </div>
+            <div class="check-box">
+                <label for="subtitle-check">
+                    <input type="checkbox" name="sub" id="subtitle-check">
+                    <span>Extract Subtitles</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <div class="setting">
+                <label for="fps">FPS</label>
+                <input type="number" name="fps" id="fps" min="1" max="24" placeholder="FPS">
+            </div>
+
+            <div class="setting">
+                <label for="quality">Quality (1 to 5)</label>
+                <input type="number" name="quality" id="quality" min="1" max="5" placeholder="1 to 5">
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button type="button">Generate</button>
+        </div>
+    </div>
+
+</body>
+
+</html>

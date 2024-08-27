@@ -1,15 +1,17 @@
 {
   "name": "framecuter-html",
   "version": "1.0.0",
-  "main": "dist/main.js",
+  "main": "src/main.js",
+
   "scripts": {
-    "build": "tsc",
-    "start": "npm run build && electron ."
+    "start": "electron ."
   },
+
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
+
   "devDependencies": {
     "@types/electron": "^1.6.10",
     "@types/node": "^22.5.0",

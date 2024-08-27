@@ -1,5 +1,5 @@
 {
     "code-runner.executorMap": {
-        "typescript": "npm start",
+        "javascript": "npm start",
     }
 }

@@ -1,0 +1,133 @@
+@font-face {
+    font-family: 'MinhaFonte';
+    src: url('ubuntu.woff') format('woff');
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #ffffff;
+    font-family: 'MinhaFonte';
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.main-container {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 400px;
+    width: 100%;
+}
+
+.upload-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border: 2px dashed #ccc;
+    cursor: pointer;
+    border-radius: 15px;
+}
+
+.upload-section img {
+    width: 80px;
+    height: 80px;
+    margin-top: 10px;
+    opacity: 80%;
+}
+.upload-section label {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    cursor: pointer;
+}
+
+.upload-section label p {
+    margin-top: 10px;
+    color: gray;
+    font-size: 14px;
+}
+
+.options-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.path {
+    display: flex;
+    flex-direction: row;
+}
+
+.path p {
+    margin-right: 10px;
+}
+
+.check-box {
+    display: flex;
+    align-items: center;
+}
+
+.check-box input {
+    margin-right: 10px;
+}
+
+.settings-section {
+    display: flex;
+    justify-content: space-between;
+}
+
+.setting {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 45%;
+}
+
+.setting input {
+    padding: 5px;
+    width: 100%;
+    text-align: center;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+}
+
+button {
+    width: 100%;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.upload-section:hover {
+    border-color: #007bff; /* Deixa a borda azul */
+    transition: 200ms;
+}
+
+.upload-section label:hover p {
+    color: #007bff; /* Deixa o texto azul */
+}
+
