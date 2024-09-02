@@ -1,55 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FrameCutter</title>
+    <title>Frame Cutter</title>
     <link rel="stylesheet" href="styles.css">
 
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';">
-
 </head>
+
 <body>
-    
-<div class="container">
-
-    <div class="sidebar">
-        <h5 id="drop-file">Drop file here</h5> <!-- Adicionado o ID file-name -->
-        <img id="icon-upload" src="upload-icon.png" alt="Icon" class="icon">
-    </div>
-
-    <div class="main-content">
-
-        <!-- Botões de Select File e Destination -->
-        <div class="file-options">
-            <label for="select-file" id="select-file-label" class="custom-file-label">Select File</label>
-            <input type="file" id="select-file" style="display: none;" accept=".mp4, .avi, .mkv">
-            
-            <label for="destination" id="label-destination" class="custom-file-label">Destination</label>
-            <input type="file" id="destination" style="display: none;">
+    <div class="main-container">
+        <div class="upload-section" id="videoDropArea">
+            <p>Click or drop your video here</p>
+            <img src="upload-icon.png" alt="Upload Icon">
         </div>
 
-        <!-- Configurações de FPS e Quality -->
-        <div class="config-options">
-            <div class="config-group">
-                <label for="fps-number">Fps:</label>
-                <input type="number" id="fps-number" name="fps-number" min="1" max="24" step="1" value="2">
+        <div class="options-section">
+            <div class="dist">
+                <div class="path">
+                    <p>Dist</p>
+                    <span id="file-name">./...</span>
+                </div>
             </div>
-
-            <div class="config-group">
-                <label for="quality-number">Quality:</label>
-                <input type="number" id="quality-number" name="quality-number" min="1" max="5" step="1" value="2">
+            <div class="check-box">
+                <input type="checkbox" id="subtitle-check">
+                <span>Extract Subtitles</span>
             </div>
         </div>
 
-        <!-- Botão Gerar -->
-        <button id="gerar-btn">Gerar</button>
+        <div class="settings-section">
+            <div class="setting">
+                <input type="number" id="fps" min="1" max="24" placeholder="FPS" accept="number">
+            </div>
 
+            <div class="question">
+                <img id="question-icon" src="question.png" alt="Question Icon">
+                <div class="info">
+                    <p>The FPS field controls how many frames per second will be captured (default: 2), while the
+                        Quality field sets the quality of these frames, with 1 being the best and 5 being the worst
+                        (default: 2).</p>
+                </div>
+            </div>
+
+            <div class="setting">
+                <input type="number" id="quality" min="1" max="5" placeholder="Quality" accept="number">
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button type="button">Generate</button>
+        </div>
     </div>
 
-</div>
-
-<script src="../renderer.js"></script>
-
+    <script src="../script.js"></script>
 </body>
+
 </html>

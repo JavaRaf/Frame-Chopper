@@ -1,32 +1,31 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
 
-// Função para criar a janela
+let mainWindow;
+
 function createWindow() {
-    const win = new BrowserWindow({
-        width: 550,
-        height: 335,
+    mainWindow = new BrowserWindow({
+        width: 385,
+        height: 385,
+        alwaysOnTop: true,
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'), 
-            nodeIntegration: false,
-            contextIsolation: true,
+            nodeIntegration: true, // Habilita integração com Node.js
+            contextIsolation: false, // Desabilita isolamento de contexto
+            enableRemoteModule: true // Habilita módulos remotos     
         }
     });
 
-    win.loadFile(path.join(__dirname, 'public', 'index.html')); 
+    mainWindow.loadFile(path.join(__dirname, 'public', 'index.html'));
 }
 
-// Quando o app estiver pronto, cria a janela
 app.whenReady().then(createWindow);
 
-// Trata o fechamento da janela principal
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
     }
 });
 
-// Cria uma nova janela se o app for ativado e não houver janelas abertas
 app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
         createWindow();
@@ -34,4 +33,15 @@ app.on('activate', () => {
 });
 
 
-app.on()
+// abri o file browser com um click
+ipcMain.handle('select-file', async () => {
+    const { canceled, filePaths } = await dialog.showOpenDialog( mainWindow, {
+        properties: ['openFile'],
+        title: 'Select your video file',
+        filters: [
+            { name: 'Videos', extensions: ['mp4', 'avi', 'mov', 'mkv'] }
+        ]
+    });
+    return canceled ? null : filePaths[0];
+});
+
