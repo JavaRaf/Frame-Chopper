@@ -1,47 +1,38 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
-const path = require('path');
+const { ipcMain, app, BrowserWindow, dialog } = require('electron');
+const path = require('path'); 
+const fs = require('fs');
+const { spawn, exec } = require('child_process');
+
 
 let mainWindow;
 
 function createWindow() {
+    // Corrigido: Criação correta da nova instância de BrowserWindow
     mainWindow = new BrowserWindow({
-        width: 385,
-        height: 385,
+        width: 800,
+        height: 600,
         alwaysOnTop: true,
         webPreferences: {
-            nodeIntegration: true, // Habilita integração com Node.js
-            contextIsolation: false, // Desabilita isolamento de contexto
-            enableRemoteModule: true // Habilita módulos remotos     
+            nodeIntegration: true,    // Permite usar APIs de Node.js no renderizador
+            contextIsolation: false,  // Desativa o isolamento de contexto
+            enableRemoteModule: true  // Necessário em algumas versões
         }
     });
 
-    mainWindow.loadFile(path.join(__dirname, 'public', 'index.html'));
+    // Carrega o arquivo HTML
+    mainWindow.loadFile(path.join(__dirname,'index.html'));
+
+    // Abre as ferramentas de desenvolvedor
+    mainWindow.webContents.openDevTools();
 }
 
 app.whenReady().then(createWindow);
 
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
-});
-
-app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow();
-    }
-});
 
 
-// abri o file browser com um click
-ipcMain.handle('select-file', async () => {
-    const { canceled, filePaths } = await dialog.showOpenDialog( mainWindow, {
-        properties: ['openFile'],
-        title: 'Select your video file',
-        filters: [
-            { name: 'Videos', extensions: ['mp4', 'avi', 'mov', 'mkv'] }
-        ]
-    });
-    return canceled ? null : filePaths[0];
+ipcMain.handle('generate', async (event, args) => {
+
+    console.log(args);
 });
+
 

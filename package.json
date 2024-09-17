@@ -4,7 +4,25 @@
   "main": "src/main.js",
 
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+
+  "build": {
+    "appId": "com.seuapp.id",
+    "productName": "framecuter", 
+    "files": [
+      "dist/**/*", 
+      "src/main.js",
+      "src/public/index.html",
+      "src/renderer.js"
+    ],
+    "mac": {
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    }
   },
 
   "keywords": [],
@@ -16,6 +34,7 @@
     "@types/electron": "^1.6.10",
     "@types/node": "^22.5.0",
     "electron": "^32.0.1",
+    "electron-builder": "^25.0.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
   }
