@@ -24,6 +24,7 @@ const div2 = document.querySelector('.div-2');
 const imgTips = div2.getElementsByTagName('img')[0];
 
 const divtips = document.querySelector('.div-tips');
+const divtipsP = divtips.getElementsByTagName('p')[0];
 // ------------------------------------------------------------------------
 
 
@@ -201,12 +202,37 @@ generateButton.addEventListener('click', async (event) => {
     event.preventDefault();
 
     videoProps.dist = inputDist.value;
-    videoProps.fps = parseInt(inputFps.value);
-    videoProps.quality = parseInt(inputQuality.value);
+    videoProps.fps = parseInt(inputFps.value, 10);
+    videoProps.quality = parseInt(inputQuality.value, 10);
     videoProps.subtitles = inputSubs.checked;
+
 
     if (videoProps.dist && videoProps.fps && videoProps.quality && videoProps.filePath) {
         const response = await ipcRenderer.invoke('generate', videoProps)
 
+
     }
+
 });
+
+// ------------------------------------------------------------------
+
+ipcRenderer.on('generate-progress', (event, progressData) => {
+
+    const frameMatch = progressData.match(/frame=\s*(\d+)/);
+    console.log('Progress:', frameMatch[1]);
+
+    if (divtips.style.visibility === 'hidden') {
+        divtips.style.visibility = 'visible';
+        
+        const img = document.createElement('img');
+        img.src = path.join(__dirname, 'x.png');
+        divtips.appendChild(img);
+    }
+
+    divtipsP.innerText = 'Cutting Frames... '+ frameMatch[1];
+
+});
+
+
+
