@@ -1,7 +1,7 @@
 const { ipcMain, app, BrowserWindow, dialog } = require('electron');
 const path = require('path'); 
 const fs = require('fs');
-const { spawn, exec } = require('child_process');
+const { spawn } = require('child_process');
 
 
 let mainWindow;
@@ -81,11 +81,11 @@ function generateFrames(framesDir, filePath, fps, quality, webContents) {
     }
 
     const ffmpegArgs = [
-        '-i', filePath,                    // Arquivo de entrada (vídeo)
-        '-vf', `fps=${fps}`,               // Filtro de frames por segundo (FPS)
-        '-vsync', 'vfr',                   // Sincronização de vídeo variável
-        '-q:v', `${quality}`,              // Qualidade dos frames
-        `${path.join(framesDir, 'frame_%00d.jpg')}`  // Arquivo de saída (frames)
+        '-i', filePath,                                 // Arquivo de entrada (vídeo)
+        '-vf', `fps=${fps}`,                            // Filtro de frames por segundo (FPS)
+        '-vsync', 'vfr',                                // Sincronização de vídeo variável
+        '-q:v', `${quality}`,                           // Qualidade dos frames
+        `${path.join(framesDir, 'frame_%00d.jpg')}`     // Arquivo de saída (frames)
     ];
 
     const ffmpegProcess = spawn('ffmpeg', ffmpegArgs);
@@ -103,12 +103,12 @@ function generateFrames(framesDir, filePath, fps, quality, webContents) {
 
     });
 
-    ipcMain.on('stop-generate', (event) => {
+    ipcMain.handle('stop-generate', (event) => {
         if (ffmpegProcess) {
             ffmpegProcess.kill('SIGINT'); // Envia o sinal para interromper o processo
-            event.sender.send('generate-stopped', 'Process was stopped.');
+            webContents.send('generate-stopped', 'Process was stopped.');
         } else {
-            event.sender.send('generate-error', 'No process to stop.');
+            webContents.send('generate-error', 'No process to stop.');
         }
     });
 }

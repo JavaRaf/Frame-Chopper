@@ -28,6 +28,11 @@ const divtipsP = divtips.getElementsByTagName('p')[0];
 // ------------------------------------------------------------------------
 
 
+const cancelProcess = document.querySelector('.status-progress');
+const cancelProcessP = cancelProcess.getElementsByTagName('p')[0];
+const cancelImg = cancelProcess.getElementsByTagName('img')[0];
+
+
 // extract subtitle and quality ----------------------------------------------------
 const subtitles = document.querySelector('.div-3');
 
@@ -69,7 +74,7 @@ const videoProps = {
     dist: '',
     subtitles: false,
     fps: 2,
-    quality: 2
+    quality: 3
 }
 
 
@@ -209,8 +214,6 @@ generateButton.addEventListener('click', async (event) => {
 
     if (videoProps.dist && videoProps.fps && videoProps.quality && videoProps.filePath) {
         const response = await ipcRenderer.invoke('generate', videoProps)
-
-
     }
 
 });
@@ -222,17 +225,22 @@ ipcRenderer.on('generate-progress', (event, progressData) => {
     const frameMatch = progressData.match(/frame=\s*(\d+)/);
     console.log('Progress:', frameMatch[1]);
 
-    if (divtips.style.visibility === 'hidden') {
-        divtips.style.visibility = 'visible';
-        
-        const img = document.createElement('img');
-        img.src = path.join(__dirname, 'x.png');
-        divtips.appendChild(img);
-    }
-
-    divtipsP.innerText = 'Cutting Frames... '+ frameMatch[1];
-
+    cancelProcess.style.visibility = 'visible';
+    cancelProcessP.innerText = 'Cutting Frames... '+ frameMatch[1];
+    
 });
+
+
+cancelImg.addEventListener('click', async () => {
+    const response = await ipcRenderer.invoke('stop-generate');
+    console.log('img click Response:', response);
+});
+
+ipcRenderer.on('generate-stopped', (event, response) => {
+    console.log(response);
+});
+
+
 
 
 

@@ -102,36 +102,6 @@ label {
 }
 
 
-.cancel-div {
-    visibility: hidden;
-    width: 250px;
-    background-color: white;
-   z-index: 10;
-    position: fixed;
-    flex-direction: column; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: #ccc solid 2px;
-    border-radius: 10px;
-    box-shadow: 5px 5px 10px gray;
-}
-
-.cancel-div img { 
-    max-width: 50px;
-    max-height: 50px;
-    cursor: pointer;
-    margin: 10px;
-}
-
-.cancel-div p {
-    color: gray;
-    font-size: 15px;
-    margin: 10px;
-}
-
-
-
 .div-tips {
     visibility: hidden;
     width: 230px;
@@ -154,6 +124,39 @@ label {
     color: gray;
     font-size: 15px;
     margin: 10px;
+}
+
+
+.status-progress {
+    flex-direction: column;
+    visibility: hidden;
+    width: 230px;
+    background-color: white;
+    z-index: 10;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: #ccc solid 2px;
+    border-radius: 10px;
+    box-shadow: 5px 5px 10px gray;
+}
+
+.status-progress p {
+    text-align: center;
+    color: gray;
+    font-size: 15px;
+    margin: 10px;
+}
+
+.status-progress img {
+    width: 40px;
+    height: 40px;
+    margin: 10px;
+    cursor: pointer;
 }
 
 .sub {
