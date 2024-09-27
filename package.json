@@ -1,7 +1,7 @@
 {
   "name": "framecuter-html",
   "version": "1.0.0",
-  "main": "src/main.js",
+  "main": "src/scripts/main/Main.js",
 
   "scripts": {
     "start": "electron .",

@@ -1,8 +1,7 @@
 @font-face {
     font-family: 'MinhaFonte';
-    src: url('ubuntu.ttf') format('truetype');
+    src: url('../fonts/ubuntu.ttf') format('truetype');
 }
-
 
 /* Global reset */
 * {
@@ -23,7 +22,7 @@ body {
 }
 
 /* Main container */
-.main {
+.main-container {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -37,9 +36,8 @@ label {
 }
 
 /* Upload Section */
-.upload-section {
+.upload-area {
     width: 100%;
-
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -51,7 +49,7 @@ label {
     overflow: hidden;
 }
 
-.upload-section:hover {
+.upload-area:hover {
     border-color: #007bff;
 
     p {
@@ -59,27 +57,26 @@ label {
     }
 }
 
-
-.upload-section p {
+.upload-area p {
     max-width: 100%;
     margin: 10px;
     text-align: center;
     color: gray;
 }
 
-
-.upload-section img {
-    max-width: 25%; /* Limita o tamanho máximo da imagem a 80% da largura da div */
+.upload-area img {
+    max-width: 25%; /* Limita o tamanho máximo da imagem a 25% da largura da div */
 }
 
 /* Options block */
-.options-block {
+.options-container {
     display: flex;
     justify-content: space-between;
     width: 100%;
 }
 
-.div-1, .div-3 {
+.destination-fps-inputs,
+.subtitle-quality-options {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -87,7 +84,7 @@ label {
     width: 45%;
 }
 
-.div-2 {
+.info-icon-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -96,38 +93,15 @@ label {
     min-width: 20px;
 }
 
-.div-2 img {
+.info-icon-container img {
     width: 100%;
     opacity: 70%;
+    cursor: pointer;
 }
 
 
-.div-tips {
-    visibility: hidden;
-    width: 230px;
-    background-color: white;
-    z-index: 10;
-    position: fixed;
-    top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: #ccc solid 2px;
-    border-radius: 10px;
-    box-shadow: 5px 5px 10px gray;
-}
-
-.div-tips p {
-    text-align: center;
-    color: gray;
-    font-size: 15px;
-    margin: 10px;
-}
-
-
-.status-progress {
+/* Progress status */
+.progress-status {
     flex-direction: column;
     visibility: hidden;
     width: 230px;
@@ -145,21 +119,22 @@ label {
     box-shadow: 5px 5px 10px gray;
 }
 
-.status-progress p {
+.progress-status p {
     text-align: center;
     color: gray;
     font-size: 15px;
     margin: 10px;
 }
 
-.status-progress img {
+.progress-status img {
     width: 40px;
     height: 40px;
     margin: 10px;
     cursor: pointer;
 }
 
-.sub {
+/* Subtitle extraction */
+.subtitle-extraction {
     display: flex;
     align-items: center;
     width: 100%;
@@ -167,18 +142,18 @@ label {
     margin: 5px;
 }
 
-.sub input {
+.subtitle-extraction input {
     margin-right: 5px;
 }
 
-.sub p {
+.subtitle-extraction label {
     color: gray;
     font-size: 15px;
 }
 
 /* Consolidated input styles */
-input[type="text" i],
-input[type="number" i] {
+input[type="text"],
+input[type="number"] {
     width: 100%;
     height: 30px;
     border-radius: 5px;
@@ -189,19 +164,17 @@ input[type="number" i] {
     font-size: 15px;
     border: none;              /* Remove todas as bordas */
     border-bottom: 2px solid #ccc; 
-
 }
 
-
 /* Button container */
-.div-button {
+.generate-button-container {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.div-button button {
+.generate-button-container button {
     width: 100%;
     font-family: 'MinhaFonte';
     font-size: 18px;
@@ -213,22 +186,20 @@ input[type="number" i] {
     cursor: pointer;
     margin-top: 10px;
     font-weight: 600;
-    font-size: 15px;
 }
 
-.div-button button:hover {
+.generate-button-container button:hover {
     background-color: #0056b3;
     box-shadow: 0 0 0 5px #3b83f65f;
 }
 
-
 @media (max-width: 235px) {
-    .div-tips {
+    .tips-container {
         width: 150px;
         top: 35%;
     }
 
-    .div-tips p {
+    .tips-container p {
         font-size: 13px;
     }
 }
