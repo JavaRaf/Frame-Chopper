@@ -11,6 +11,7 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width: 400,
         height: 400,
+        icon: path.resolve(__dirname, '..', '..', 'images', 'icon.png'),
         alwaysOnTop: true,
         webPreferences: {
             nodeIntegration: true,    // Permite usar APIs de Node.js no renderizador

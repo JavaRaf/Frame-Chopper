@@ -12,7 +12,7 @@ async function createDivInfo(text) {
     divTips.style.backgroundColor = 'white';
     divTips.style.zIndex = '10';
     divTips.style.position = 'fixed';
-    divTips.style.top = '40%';
+    divTips.style.top = '35%';
     divTips.style.left = '50%';
     divTips.style.transform = 'translate(-50%, -50%)';
     divTips.style.display = 'flex';
