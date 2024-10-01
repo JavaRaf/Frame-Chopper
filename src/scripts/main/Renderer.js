@@ -118,6 +118,13 @@ uploadArea.addEventListener('drop', (event) => {
 generateButton.addEventListener('click', async (event) => {
     event.preventDefault();
 
+    if(fpsInput.value < 1 || fpsInput.value > 60) {
+        fpsInput.value = 2;
+    }
+    if(qualityInput.value < 1 || qualityInput.value > 5) {
+        qualityInput.value = 3;
+    }
+
     videoProps.dist = distInput.value;
     videoProps.fps = parseInt(fpsInput.value, 10);
     videoProps.quality = parseInt(qualityInput.value, 10);
@@ -134,7 +141,8 @@ ipcRenderer.on('ffmpeg-progress', (event, message) => {
 
     const regex = /frame=\s*(\d+)\s.*time=\s*([^\s]+)/;
     const match = message.match(regex);
-    if (match) {
+
+    if (match && message.includes('stderr:')) {
         const frame = match[1];
         const time = match[2];
         progressStatusParagraph.innerText = `FramesCutted: ${frame} \n Video Time: ${time}`;
@@ -146,10 +154,21 @@ ipcRenderer.on('ffmpeg-progress', (event, message) => {
 ipcRenderer.on('ffmpeg-status', (event, message) => {
     console.log(`Status do FFmpeg: ${message}`);
 
-    progressStatus.style.visibility = 'hidden';
-    generateButton.disabled = false;
+    if (message.includes('0')) {
+
+        progressStatusParagraph.style.color = '#4d9460';
+        progressStatusParagraph.innerText = 'Process Finished';
+
+        setTimeout(() => {
+            generateButton.disabled = false;
+            progressStatus.style.visibility = 'hidden';
+            ipcRenderer.send('reload-window');
+        }, 3000);
+       
+    }
 });
 
 progressStatusImg.addEventListener('click', (event) => {
     ipcRenderer.send('cancel-progress');
+    progressStatusParagraph.innerText = 'FramesCutted: 00 \n Video Time: 00:00:00:00';
 });

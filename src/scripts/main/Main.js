@@ -9,8 +9,8 @@ let mainWindow;
 function createWindow() {
     // Corrigido: Criação correta da nova instância de BrowserWindow
     mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 400,
+        height: 400,
         alwaysOnTop: true,
         webPreferences: {
             nodeIntegration: true,    // Permite usar APIs de Node.js no renderizador
@@ -19,11 +19,9 @@ function createWindow() {
         }
     });
 
-    // Carrega o arquivo HTML
+    mainWindow.setMenu(null);
     mainWindow.loadFile(path.resolve(__dirname, '..', '..', 'html', 'index.html'));
 
-    // Abre as ferramentas de desenvolvedor
-    mainWindow.webContents.openDevTools();
 }
 
 app.whenReady().then(createWindow);
@@ -85,10 +83,8 @@ ipcMain.handle('generate', async (event, args) => {
 
 
 function extractSubtitle(filePath) {
-    // Corrigido: Nome fixo do diretório de legendas
+    
     const subsDir = path.join(path.dirname(filePath), 'Subtitles');
-
-    // Cria o diretório para legendas
     if (!fs.existsSync(subsDir)) {
         fs.mkdirSync(subsDir, { recursive: true });
         console.log(`Create Subtitles Directory: ${subsDir}`);
@@ -130,5 +126,11 @@ function extractSubtitle(filePath) {
 ipcMain.on('cancel-progress', () => {
     if (ffmpegProcess !== null) {
         ffmpegProcess.kill('SIGINT');
+    }
+})
+
+ipcMain.on('reload-window', () => {
+    if(mainWindow) {
+        mainWindow.reload();
     }
 })
