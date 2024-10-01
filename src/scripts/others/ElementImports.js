@@ -28,6 +28,8 @@ export const infoIcon = infoIconContainer.querySelector('img');
 
 // Progress status
 export const progressStatus = document.querySelector('.progress-status');
+export const progressStatusParagraph = progressStatus.querySelector('p');
+export const progressStatusImg = progressStatus.querySelector('img');
 
 // Subtitle extraction
 export const subtitleExtraction = document.querySelector('.subtitle-extraction');

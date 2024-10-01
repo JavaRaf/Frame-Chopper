@@ -8,8 +8,7 @@ async function createDivInfo(text) {
 
     // Adiciona estilos diretamente
     divTips.style.visibility = 'visible';
-    divTips.style.minWidth = '150px';
-    divTips.style.maxWidth = '320px';
+    divTips.style.minWidth = '330px';
     divTips.style.backgroundColor = 'white';
     divTips.style.zIndex = '10';
     divTips.style.position = 'fixed';
@@ -28,10 +27,9 @@ async function createDivInfo(text) {
     paragraph.textContent = text; // Define o texto do parágrafo
 
     // Adiciona estilos ao parágrafo
-    paragraph.style.padding = '10px';
     paragraph.style.textAlign = 'center';
     paragraph.style.color = 'gray';
-    paragraph.style.fontSize = '15px';
+    paragraph.style.fontSize = '14px';
     paragraph.style.margin = '10px';
 
     // Adiciona o parágrafo à div principal
@@ -55,8 +53,11 @@ infoIcon.addEventListener("click", async (event) => {
         existingDiv.remove();
     }
     else {
-        createDivInfo("text text text text text text text text text text text text \
-        text text text text text text text text text text text text text text text");
+        createDivInfo("Destination Path: Specifies the folder where the extracted frames will be saved. A new folder will be created if it doesn't already exist. \
+            Extract Subtitles: Extracts English subtitles from the video, if available. \
+            FPS: Sets the number of frames to extract per second. The default value is 2. \
+            Quality: Defines the quality of the extracted frames, where 1 is the highest quality and 5 is the lowest."
+        );
     }
 
 });

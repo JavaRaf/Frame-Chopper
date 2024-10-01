@@ -1,5 +1,5 @@
 // renderer.js (processo de renderização)
-import{ uploadArea, uploadInput, uploadText, uploadImg, generateButton, distInput, fpsInput, qualityInput, checkBoxInput } from '../others/ElementImports.js';
+import{ uploadArea, uploadInput, uploadText, uploadImg, generateButton, distInput, fpsInput, qualityInput, checkBoxInput, progressStatus, progressStatusParagraph, progressStatusImg } from '../others/ElementImports.js';
 const { ipcRenderer, webUtils } = require('electron');
 const path = require('path'); 
 
@@ -30,7 +30,6 @@ function setProps(filePath) {
     qualityInput.value = videoProps.quality;
     
 }
-// -------------------------------------------------
 
 // styles ------------------------------------------
 function styleInput(filePath) {
@@ -115,7 +114,6 @@ uploadArea.addEventListener('drop', (event) => {
     
 });
 
-
 // button
 generateButton.addEventListener('click', async (event) => {
     event.preventDefault();
@@ -127,10 +125,31 @@ generateButton.addEventListener('click', async (event) => {
 
     if (videoProps.dist && videoProps.fps && videoProps.quality && videoProps.filePath) {
         const response = await ipcRenderer.invoke('generate', videoProps)
-        console.log(response);
     }
-
-    
 });
 
+// Escutando as atualizações de progresso do FFmpeg
+ipcRenderer.on('ffmpeg-progress', (event, message) => {
+    progressStatus.style.visibility = 'visible';
 
+    const regex = /frame=\s*(\d+)\s.*time=\s*([^\s]+)/;
+    const match = message.match(regex);
+    if (match) {
+        const frame = match[1];
+        const time = match[2];
+        progressStatusParagraph.innerText = `FramesCutted: ${frame} \n Video Time: ${time}`;
+        generateButton.disabled = true;
+    }
+});
+
+// Escutando a mensagem de status do FFmpeg
+ipcRenderer.on('ffmpeg-status', (event, message) => {
+    console.log(`Status do FFmpeg: ${message}`);
+
+    progressStatus.style.visibility = 'hidden';
+    generateButton.disabled = false;
+});
+
+progressStatusImg.addEventListener('click', (event) => {
+    ipcRenderer.send('cancel-progress');
+});
