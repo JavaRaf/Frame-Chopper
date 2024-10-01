@@ -164,7 +164,10 @@ ipcRenderer.on('ffmpeg-status', (event, message) => {
             progressStatus.style.visibility = 'hidden';
             ipcRenderer.send('reload-window');
         }, 3000);
-       
+    }
+    else {
+        generateButton.disabled = false;
+        progressStatus.style.visibility = 'hidden';
     }
 });
 
