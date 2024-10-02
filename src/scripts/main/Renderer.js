@@ -3,6 +3,15 @@ import{ minimize, close, uploadArea, uploadInput, uploadText, uploadImg, generat
 const { ipcRenderer, webUtils } = require('electron');
 const path = require('path'); 
 
+// minimize and close functionality --------------------------------------------
+minimize.addEventListener('click', () => {
+    ipcRenderer.invoke('window-minimize');
+});
+
+close.addEventListener('click', () => {
+    ipcRenderer.invoke('window-close');
+});
+
 // init video props
 const videoProps = {
     filePath: '',
@@ -14,21 +23,20 @@ const videoProps = {
 
 function setProps(filePath) {
     videoProps.filePath = filePath;
-    videoProps.dist = path.dirname(filePath);
 
+    let distPaste = path.parse(videoProps.filePath).name.match(/\d+/);
 
-    const distPaste = videoProps.filePath.match(/\d+/);
     if (distPaste) {
-        distInput.value = 'EP ' + distPaste[0]
+        videoProps.dist = `EP ${distPaste[0]}`;
+        distInput.value =  videoProps.dist;
     }
     else {
-        distInput.value = path.basename(videoProps.filePath);
+        videoProps.dist = path.parse(videoProps.filePath).name; 
+        distInput.value =  videoProps.dist;
     }
-
+    
     fpsInput.value = videoProps.fps;
-    
     qualityInput.value = videoProps.quality;
-    
 }
 
 // styles ------------------------------------------
@@ -65,6 +73,8 @@ function styleInput(filePath) {
         uploadText.innerText = path.basename(filePath);
         uploadText.style.color = '#007bff';
         uploadImg.src = path.resolve(__dirname, '../', 'images', 'video-icon.png');
+
+        return true;
     } else {
         uploadArea.style.borderColor = '#ff4c4c';
         uploadText.innerText = 'file not supported';
@@ -75,26 +85,19 @@ function styleInput(filePath) {
             uploadText.style.color = originalTextColor;
             uploadText.innerText = originalInnerText;
         }, 1500);
+
+        return false;
     }
 }
-
-
-// minimize and close functionality --------------------------------------------
-minimize.addEventListener('click', () => {
-    ipcRenderer.invoke('window-minimize');
-});
-
-close.addEventListener('click', () => {
-    ipcRenderer.invoke('window-close');
-});
-
 
 // input video -----------------------------------------------------------------
 uploadInput.addEventListener('change', (event) => {
     const filePath = webUtils.getPathForFile(event.target.files[0]);
     
-    styleInput(filePath);
-    setProps(filePath)
+    const isVideoSuported = styleInput(filePath);
+    if(isVideoSuported) {
+        setProps(filePath)
+    }
 
     // Redefine o valor do input para garantir que o evento change seja disparado novamente
     uploadInput.value = '';
@@ -120,9 +123,12 @@ uploadArea.addEventListener('drop', (event) => {
     event.preventDefault();
 
     const filePath = webUtils.getPathForFile(event.dataTransfer.files[0]);
-    styleInput(filePath);
-    setProps(filePath)
-    
+    const isVideoSuported = styleInput(filePath);
+
+    if(isVideoSuported) {
+        setProps(filePath)
+    }
+  
 });
 
 // button
