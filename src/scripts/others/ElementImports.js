@@ -10,6 +10,10 @@ export const uploadText = uploadArea.querySelector('p');
 export const uploadImg = uploadArea.querySelector('img');
 
 
+// minimize and close buttons
+export const minimize = document.querySelector('#minimize-btn');
+export const close = document.querySelector('#close-btn');
+
 // Inputs type text and number
 export const textNumberInputs = document.querySelectorAll('input[type="text"], input[type="number"]');
 export const destinationFpsInput = document.querySelector('.destination-fps-inputs');

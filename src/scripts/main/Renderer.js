@@ -1,5 +1,5 @@
 // renderer.js (processo de renderização)
-import{ uploadArea, uploadInput, uploadText, uploadImg, generateButton, distInput, fpsInput, qualityInput, checkBoxInput, progressStatus, progressStatusParagraph, progressStatusImg } from '../others/ElementImports.js';
+import{ minimize, close, uploadArea, uploadInput, uploadText, uploadImg, generateButton, distInput, fpsInput, qualityInput, checkBoxInput, progressStatus, progressStatusParagraph, progressStatusImg } from '../others/ElementImports.js';
 const { ipcRenderer, webUtils } = require('electron');
 const path = require('path'); 
 
@@ -77,6 +77,17 @@ function styleInput(filePath) {
         }, 1500);
     }
 }
+
+
+// minimize and close functionality --------------------------------------------
+minimize.addEventListener('click', () => {
+    ipcRenderer.invoke('window-minimize');
+});
+
+close.addEventListener('click', () => {
+    ipcRenderer.invoke('window-close');
+});
+
 
 // input video -----------------------------------------------------------------
 uploadInput.addEventListener('change', (event) => {

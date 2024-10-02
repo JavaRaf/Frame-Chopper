@@ -9,9 +9,14 @@ let mainWindow;
 function createWindow() {
     // Corrigido: Criação correta da nova instância de BrowserWindow
     mainWindow = new BrowserWindow({
-        width: 400,
-        height: 400,
-        icon: path.resolve(__dirname, '..', '..', 'images', 'icon.png'),
+        minWidth: 250,
+        maxWidth: 350,
+        width: 350,
+        height: 350,
+        maxHeight: 350,
+        minHeight: 350,
+        frame: false,
+        icon: path.resolve(__dirname, '..', '..', 'images', 'icon.ico'),
         alwaysOnTop: true,
         webPreferences: {
             nodeIntegration: true,    // Permite usar APIs de Node.js no renderizador
@@ -27,6 +32,14 @@ function createWindow() {
 
 app.whenReady().then(createWindow);
 
+
+ipcMain.handle('window-minimize', () => {
+    mainWindow.minimize();
+  });
+
+  ipcMain.handle('window-close', () => {
+    mainWindow.close();
+  });
 
 
 let ffmpegProcess = null; // Variável global para armazenar o processo
