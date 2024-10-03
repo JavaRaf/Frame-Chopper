@@ -19,6 +19,8 @@ body {
     display: flex;
     flex-direction: row;
     min-height: 100vh;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .pseudo-body {
@@ -195,7 +197,6 @@ label {
     cursor: pointer;
 }
 
-
 /* Progress status */
 .progress-status {
     flex-direction: column;
@@ -288,15 +289,4 @@ input[type="number"] {
 .generate-button-container button:hover {
     background-color: #0056b3;
     box-shadow: 0 0 0 5px #3b83f65f;
-}
-
-@media (max-width: 235px) {
-    .tips-container {
-        width: 150px;
-        top: 35%;
-    }
-
-    .tips-container p {
-        font-size: 13px;
-    }
 }

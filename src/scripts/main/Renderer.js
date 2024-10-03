@@ -3,6 +3,33 @@ import{ minimize, close, uploadArea, uploadInput, uploadText, uploadImg, generat
 const { ipcRenderer, webUtils } = require('electron');
 const path = require('path'); 
 
+
+// check if ffmpeg is installed
+window.onload = async () => {
+    try {
+        // Invoca a verificação do FFmpeg
+        const response = await ipcRenderer.invoke('check-ffmpeg');
+        
+        if (response === false) {
+            console.log('FFmpeg not found');
+            progressStatus.style.visibility = 'visible';
+            progressStatusParagraph.innerHTML = 'FFmpeg not installed <br> Please install FFmpeg before use';
+            progressStatusParagraph.style.color = 'red';
+            progressStatusImg.remove();
+            generateButton.disabled = true;
+
+            setTimeout(() => {
+                ipcRenderer.invoke('window-close');
+            }, 4000);
+
+        } else {
+            console.log('FFmpeg found');
+        }
+    } catch (error) {
+        console.error('Error checking FFmpeg:', error);
+    }
+};
+
 // minimize and close functionality --------------------------------------------
 minimize.addEventListener('click', () => {
     ipcRenderer.invoke('window-minimize');

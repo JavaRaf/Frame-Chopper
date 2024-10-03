@@ -20,15 +20,47 @@ function createWindow() {
             enableRemoteModule: true  // Necessário em algumas versões
         }
     });
-
-    mainWindow.webContents.openDevTools({ mode: 'detach' });
-
+    
     mainWindow.setMenu(null);
     mainWindow.loadFile(path.resolve(__dirname, '..', '..', 'html', 'index.html'));
     mainWindow.setResizable(false);
+
 }
 
-app.whenReady().then(createWindow);
+// padrao do sistema
+app.whenReady().then(() => {
+    createWindow();
+
+    app.on('activate', () => {
+        if (BrowserWindow.getAllWindows().length === 0) {
+            createWindow();
+        }
+    });
+});
+
+// quando o app estiver fechado
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
+});
+
+// Verifica se o FFmpeg está instalado
+ipcMain.handle('check-ffmpeg', async () => {
+    return new Promise((resolve, reject) => {
+        const ffmpegCheck = spawn('ffmpeg', ['-version']);
+        
+        // Se ocorrer um erro, significa que o FFmpeg não está instalado
+        ffmpegCheck.on('error', () => {
+            resolve(false); // FFmpeg não encontrado
+        });
+        
+        // Se o FFmpeg estiver instalado, capturamos a saída padrão
+        ffmpegCheck.stdout.on('data', (data) => {
+            resolve(true); // FFmpeg encontrado
+        });
+    });
+});
 
 
 ipcMain.handle('window-minimize', () => {
@@ -38,7 +70,6 @@ ipcMain.handle('window-minimize', () => {
 ipcMain.handle('window-close', () => {
     mainWindow.close();
 });
-
 
 let ffmpegProcess = null; // Variável global para armazenar o processo
 
