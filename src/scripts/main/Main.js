@@ -25,7 +25,10 @@ function createWindow() {
     mainWindow.loadFile(path.resolve(__dirname, '..', '..', 'html', 'index.html'));
     mainWindow.setResizable(false);
 
+    //mainWindow.webContents.openDevTools({ mode: 'detach' });
+
 }
+
 
 // padrao do sistema
 app.whenReady().then(() => {
@@ -37,6 +40,7 @@ app.whenReady().then(() => {
         }
     });
 });
+
 
 // quando o app estiver fechado
 app.on('window-all-closed', () => {
@@ -63,6 +67,24 @@ ipcMain.handle('check-ffmpeg', async () => {
 });
 
 
+
+ipcMain.on('request-file-path', (event) => {
+    const args = process.argv.slice(1); // Ignora o primeiro argumento
+    console.log("Todos os argumentos recebidos:", args); // Log todos os argumentos
+
+    if (args.length > 0) {
+        const filePath = args[1] || args[0]; // Pega o segundo argumento ou, se não existir, pega o primeiro
+        console.log("Arquivo recebido ao iniciar:", filePath);
+
+        // Envia o caminho do arquivo para o renderer process
+        event.sender.send('file-opened', filePath);
+    } else {
+        console.log("Nenhum arquivo recebido ao iniciar.");
+        event.sender.send('file-opened', null); // Envia null ou uma mensagem indicando que nenhum arquivo foi recebido
+    }
+});
+
+
 ipcMain.handle('window-minimize', () => {
     mainWindow.minimize();
 });
@@ -71,7 +93,7 @@ ipcMain.handle('window-close', () => {
     mainWindow.close();
 });
 
-let ffmpegProcess = null; // Variável global para armazenar o processo
+let ffmpegProcess = null; // Variável global para armazenar o processo do FFmpeg
 
 ipcMain.handle('generate', async (event, args) => {
     const { filePath, dist, subtitles, fps, quality } = args;

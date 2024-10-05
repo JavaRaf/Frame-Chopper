@@ -1,7 +1,5 @@
 import { textNumberInputs } from "./ElementImports.js";
 
-
-
 // Função para desabilitar drag and drop dos inputs de texto e numero
 async function disableDragAndDrop(input) {
 

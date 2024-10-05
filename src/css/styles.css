@@ -286,7 +286,7 @@ input[type="number"] {
     font-weight: 600;
 }
 
-.generate-button-container button:hover {
+.generate-button-container button:active {
     background-color: #0056b3;
     box-shadow: 0 0 0 5px #3b83f65f;
 }

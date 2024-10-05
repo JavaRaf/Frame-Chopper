@@ -1,6 +1,6 @@
 {
-  "name": "frame-chopper",
-  "version": "1.0.0",
+  "name": "frame-chopper-1.0.1",
+  "version": "1.0.1",
   "main": "src/scripts/main/Main.js",
   "scripts": {
     "start": "electron .",
@@ -8,10 +8,17 @@
   },
   "build": {
     "appId": "com.seuapp.id",
-    "productName": "frame-chopper",
+    "productName": "frame chopper",
     "files": [
       "dist/**/*",
       "src/**/*"
+    ],
+    "fileAssociations": [
+      {
+        "ext": ["mp4", "mkv", "avi", "mov", "wmv", "flv", "webm", "m4v", "mpg", "mpeg", "3gp", "ogv", "ts", "vob", "rm", "rmvb", "f4v"],
+        "name": "Vídeo file",
+        "role": "Viewer"
+      }
     ],
     "mac": {
       "target": "dmg"
@@ -24,13 +31,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "App para cortar frames de vídeos",
+  "description": "App to cut frames from videos",
   "devDependencies": {
-    "@types/electron": "^1.6.10",
-    "@types/node": "^22.5.0",
-    "electron": "^32.0.1",
-    "electron-builder": "^25.1.7",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.5.4"
+    "electron": "^32.1.2",
+    "electron-builder": "^25.1.7"
   }
 }

@@ -41,7 +41,7 @@ export const subtitleCheck = document.querySelector('#subtitle-check');
 
 // Button container
 export const generateButtonContainer = document.querySelector('.generate-button-container');
-export const generateButton = generateButtonContainer.querySelector('button'); // Assumindo que o botão está dentro do container
+export const generateButton = generateButtonContainer.querySelector('button');
 
 // --------------------------------------------------------------------------------------------------------------------
 

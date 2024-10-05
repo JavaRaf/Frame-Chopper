@@ -1,4 +1,3 @@
-// renderer.js (processo de renderização)
 import{ minimize, close, uploadArea, uploadInput, uploadText, uploadImg, generateButton, distInput, fpsInput, qualityInput, checkBoxInput, progressStatus, progressStatusParagraph, progressStatusImg } from '../others/ElementImports.js';
 const { ipcRenderer, webUtils } = require('electron');
 const path = require('path'); 
@@ -29,6 +28,25 @@ window.onload = async () => {
         console.error('Error checking FFmpeg:', error);
     }
 };
+
+
+// Solicita o caminho do arquivo ao processo principal
+ipcRenderer.send('request-file-path');
+
+// Escuta a resposta do caminho do arquivo
+ipcRenderer.on('file-opened', (event, filePath) => {
+    if (filePath) {
+        
+        const isVideoSuported = styleInput(filePath);
+        if(isVideoSuported) {
+            setProps(filePath)
+        }
+
+    } else {
+        console.log("Nenhum arquivo foi recebido ao iniciar.");
+    }
+});
+
 
 // minimize and close functionality --------------------------------------------
 minimize.addEventListener('click', () => {
