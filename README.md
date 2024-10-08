@@ -1,5 +1,5 @@
 <p align="center">
-  🎥 <h1Frame Chopper/>
+  🎥 <h1>Frame Chopper</h1>
 </p>
 
 <div align="center">
