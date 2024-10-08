@@ -28,9 +28,9 @@ Frame Chopper is a graphical interface for generating frames from an input video
 
 ## 🛠️ Usage
 
-1. Download and run [FrameChopper-1.0.1.zip](https://github.com/JavaRaf/Frame-Chopper/releases/tag/v1.0.1) (Windows).
-2. Click the input area or drag and drop a video file.
-3. Set the desired settings:
+1. Download and run [FrameChopper](https://github.com/JavaRaf/Frame-Chopper/releases/tag/v1.0.1) (Windows).
+3. Click the input area or drag and drop a video file.
+4. Set the desired settings:
    - **Destination Path**: Choose where the frames will be saved. If the folder does not exist, a new one will be created.
    - **FPS**: Set the number of frames per second to extract (default: 2).
    - **Quality**: Define the quality of the extracted frames (1 is the best, 5 is the lowest).
