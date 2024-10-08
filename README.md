@@ -12,6 +12,11 @@ Frame Chopper is a graphical interface for generating frames from an input video
 
 ## Install FFmpeg
 
+- Set the Execution Policy (First Time Only)
+  - If this is your first time running remote scripts, you'll need to allow PowerShell to execute them. Run the following command to set the execution policy
+  ```
+  Set-ExecutionPolicy RemoteSigned -scope CurrentUser
+
 - Open terminal with administrator privileges, then run the following command: 
   ```bash
   iwr -useb get.scoop.sh | iex
