@@ -1,6 +1,4 @@
-<p align="center">
-  🎥 Frame Chopper
-</p>
+<h1 align="center">🎥 Frame Chopper</h1>
 
 <div align="center">
   <img src="./src/images/framechopper.png" alt="Frame Chopper" />
@@ -30,7 +28,7 @@ Frame Chopper is a graphical interface for generating frames from an input video
 
 ## 🛠️ Usage
 
-1. Download and run **FrameChopper-1.0.1.zip** (Windows).
+1. Download and run [FrameChopper-1.0.1.zip](https://github.com/JavaRaf/Frame-Chopper/releases/tag/v1.0.1) (Windows).
 2. Click the input area or drag and drop a video file.
 3. Set the desired settings:
    - **Destination Path**: Choose where the frames will be saved. If the folder does not exist, a new one will be created.
@@ -40,7 +38,8 @@ Frame Chopper is a graphical interface for generating frames from an input video
 
 ## ✨ Used technologies
 
-- [Electron](https://www.electronjs.org) - The main interface.
+- [Html, css, js](https://www.w3schools.com/html/html5_video.asp) - Frontend
+- [Electron](https://www.electronjs.org) - Backend
 - [FFmpeg](https://ffmpeg.org) - The video processing tool.
 
 
