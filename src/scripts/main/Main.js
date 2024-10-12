@@ -119,7 +119,7 @@ ipcMain.handle('generate', async (event, args) => {
     const ffmpegArgs = [
         '-i', filePath,                                 // Arquivo de entrada (vídeo)
         '-vf', `fps=${fps}`,                            // Filtro de frames por segundo (FPS)
-        '-vsync', 'vfr',                                // Sincronização de vídeo variável
+        '-fps_mode', 'vfr',                             // Sincronização de vídeo variável
         '-q:v', `${quality}`,                           // Qualidade dos frames
         `${path.join(framesDir, 'frame_%00d.jpg')}`     // Arquivo de saída (frames)
     ];
