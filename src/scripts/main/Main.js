@@ -2,6 +2,7 @@ const { ipcMain, app, BrowserWindow } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { spawn } = require('child_process');
+const seven = require('node-7z');
 
 
 let mainWindow;
@@ -49,36 +50,48 @@ app.on('window-all-closed', () => {
     }
 });
 
-// Verifica se o FFmpeg está instalado
-ipcMain.handle('check-ffmpeg', async () => {
-    return new Promise((resolve, reject) => {
-        const ffmpegCheck = spawn('ffmpeg', ['-version']);
+let ffmpegPath = path.join(process.resourcesPath, "ffmpeg", "bin", "ffmpeg.exe");
+ipcMain.handle('extract-ffmpeg', async () => {
+    
+    // Verifica se o ffmpeg já foi extraído
+    if (!fs.existsSync(ffmpegPath)) {
+        const sourcePath = path.join(process.resourcesPath,'ffmpeg.7z');
+        const outputPath = path.join(process.resourcesPath, './');
         
-        // Se ocorrer um erro, significa que o FFmpeg não está instalado
-        ffmpegCheck.on('error', () => {
-            resolve(false); // FFmpeg não encontrado
+        // Usando o método correto para extrair com node-7z
+        const extract = seven.extractFull(sourcePath, outputPath, {
+            $progress: true
         });
-        
-        // Se o FFmpeg estiver instalado, capturamos a saída padrão
-        ffmpegCheck.stdout.on('data', (data) => {
-            resolve(true); // FFmpeg encontrado
+
+        extract.on('progress', (progress) => {
+            console.log(`Progresso: ${progress.percent}%`);
         });
-    });
+
+        extract.on('end', () => {
+            console.log('Extração concluída com sucesso');
+        });
+
+        extract.on('error', (err) => {
+            console.error(`Erro ao extrair: ${err}`);
+        });
+    } else {
+        console.log('ffmpeg já está extraído.');
+    }
 });
-
-
 
 ipcMain.on('request-file-path', (event) => {
     const args = process.argv.slice(1); // Ignora o primeiro argumento
     console.log("Todos os argumentos recebidos:", args); // Log todos os argumentos
 
     if (args.length > 0) {
-        const filePath = args[1] || args[0]; // Pega o segundo argumento ou, se não existir, pega o primeiro
-        console.log("Arquivo recebido ao iniciar:", filePath);
-
-        // Envia o caminho do arquivo para o renderer process
-        event.sender.send('file-opened', filePath);
-    } else {
+        const filePath = args[1] || args[0];
+        if ( filePath !== '.' ) {
+            console.log("Arquivo recebido ao iniciar:", filePath);
+            event.sender.send('file-opened', filePath);
+        }
+        
+    } 
+    else {
         console.log("Nenhum arquivo recebido ao iniciar.");
         event.sender.send('file-opened', null); // Envia null ou uma mensagem indicando que nenhum arquivo foi recebido
     }
@@ -125,7 +138,7 @@ ipcMain.handle('generate', async (event, args) => {
     ];
 
     // Inicia o processo do FFmpeg
-    ffmpegProcess = spawn('ffmpeg', ffmpegArgs);
+    ffmpegProcess = spawn(ffmpegPath, ffmpegArgs);
 
     ffmpegProcess.stderr.on('data', (data) => {
         const message = `stderr: ${data}`;
@@ -167,7 +180,7 @@ function extractSubtitle(filePath) {
         ];
 
         // Usando spawn para maior segurança
-        const ffmpegProcess = spawn('ffmpeg', subtitleArgs);
+        const ffmpegProcess = spawn(ffmpegPath, subtitleArgs);
 
         ffmpegProcess.stdout.on('data', (data) => {
             console.log(`stdout: ${data}`);

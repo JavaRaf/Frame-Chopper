@@ -1,6 +1,6 @@
 {
-  "name": "frame-chopper-1.0.1",
-  "version": "1.0.1",
+  "name": "frame-chopper",
+  "version": "1.2.0",
   "main": "src/scripts/main/Main.js",
   "scripts": {
     "start": "electron .",
@@ -8,10 +8,21 @@
   },
   "build": {
     "appId": "com.seuapp.id",
-    "productName": "frame chopper",
+    "productName": "Frame Chopper", 
+    "extraResources": [
+      {
+        "from": "src/tools/ffmpeg.7z", 
+        "to": "./",      
+        "filter": ["**/*"]   
+      }
+    ],
     "files": [
       "dist/**/*",
-      "src/**/*"
+      "src/**/*",
+      "!dist/**/node_modules/*", 
+      "!**/node_modules/*/{docs,example,test}/**",
+      "!**/*.md",
+      "!**/*.map"
     ],
     "fileAssociations": [
       {
@@ -52,9 +63,9 @@
   "description": "App to cut frames from videos",
   "devDependencies": {
     "electron": "^32.1.2",
-    "electron-builder": "^25.1.7"
+    "electron-builder": "^25.1.8"
   },
   "dependencies": {
-    "frame-chopper-1.0.1": "file:"
+    "node-7z": "^3.0.0"
   }
 }

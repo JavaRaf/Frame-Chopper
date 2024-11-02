@@ -3,29 +3,14 @@ const { ipcRenderer, webUtils } = require('electron');
 const path = require('path'); 
 
 
-// check if ffmpeg is installed
+// extract the ffmpeg binaries
 window.onload = async () => {
     try {
-        // Invoca a verificação do FFmpeg
-        const response = await ipcRenderer.invoke('check-ffmpeg');
-        
-        if (response === false) {
-            console.log('FFmpeg not found');
-            progressStatus.style.visibility = 'visible';
-            progressStatusParagraph.innerHTML = 'FFmpeg not installed <br> Please install FFmpeg before use';
-            progressStatusParagraph.style.color = 'red';
-            progressStatusImg.remove();
-            generateButton.disabled = true;
+        result = await ipcRenderer.invoke('extract-ffmpeg');
+        console.log(result);
 
-            setTimeout(() => {
-                ipcRenderer.invoke('window-close');
-            }, 4000);
-
-        } else {
-            console.log('FFmpeg found');
-        }
-    } catch (error) {
-        console.error('Error checking FFmpeg:', error);
+    } catch (error) {    
+        console.log(error);
     }
 };
 
@@ -35,7 +20,7 @@ ipcRenderer.send('request-file-path');
 
 // Escuta a resposta do caminho do arquivo
 ipcRenderer.on('file-opened', (event, filePath) => {
-    if (filePath) {
+    if (filePath && filePath.length !== '.') {
         
         const isVideoSuported = styleInput(filePath);
         if(isVideoSuported) {
