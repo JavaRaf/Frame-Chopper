@@ -173,8 +173,8 @@ generateButton.addEventListener('click', async (event) => {
     }
 
     videoProps.dist = distInput.value;
-    videoProps.fps = parseInt(fpsInput.value, 10);
-    videoProps.quality = parseInt(qualityInput.value, 10);
+    videoProps.fps = parseFloat(fpsInput.value.replace(',', '.'));
+    videoProps.quality = parseFloat(qualityInput.value.replace(',', '.'));
     videoProps.subtitles = checkBoxInput.checked;
 
     if (videoProps.dist && videoProps.fps && videoProps.quality && videoProps.filePath) {
