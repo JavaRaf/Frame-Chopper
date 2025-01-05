@@ -21,7 +21,7 @@ Frame Chopper is a graphical interface for generating frames from an input video
 
 ## ✨ Used technologies
 
-- [Html, css, js](https://www.w3schools.com/html/html5_video.asp) - Frontend
+- [HTML, CSS, JS](https://www.w3schools.com/html/html5_video.asp) - Frontend
 - [Electron](https://www.electronjs.org) - framework
 - [JavaScript](https://www.javascript.com) - Backend
 - [FFmpeg](https://ffmpeg.org) - The video processing tool.
