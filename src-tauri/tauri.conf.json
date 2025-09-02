@@ -1,0 +1,67 @@
+{
+  "$schema": "https://schema.tauri.app/config/1",
+  "package": {
+    "productName": "Frame Chopper",
+    "version": "1.2.0"
+  },
+  "tauri": {
+    "build": {
+      "distDir": "../src",
+      "devPath": "../src"
+    },
+    "windows": [
+      {
+        "label": "main",
+        "title": "Frame Chopper",
+        "url": "html/index.html",
+        "width": 350,
+        "height": 350,
+        "resizable": false,
+        "fullscreen": false,
+        "decorations": false,
+        "alwaysOnTop": true,
+        "visible": true
+      }
+    ],
+    "bundle": {
+      "active": true,
+      "identifier": "com.seuapp.id",
+      "icon": [
+        "icons/icon.ico"
+      ],
+      "resources": [
+        "../src/tools/ffmpeg.7z",
+        "../src/images/icon.ico"
+      ],
+      "fileAssociations": [
+        {
+          "name": "Vídeo file",
+          "ext": [
+            "mp4",
+            "mkv",
+            "avi",
+            "mov",
+            "wmv",
+            "flv",
+            "webm",
+            "m4v",
+            "mpg",
+            "mpeg",
+            "3gp",
+            "ogv",
+            "ts",
+            "vob",
+            "rm",
+            "rmvb",
+            "f4v"
+          ],
+          "role": "Viewer"
+        }
+      ]
+    },
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' data: asset:; script-src 'self' 'unsafe-inline' 'unsafe-eval' tauri: asset:; style-src 'self' 'unsafe-inline';"
+    }
+  }
+}
+

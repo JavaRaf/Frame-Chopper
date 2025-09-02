@@ -1,10 +1,9 @@
 {
   "name": "frame-chopper",
   "version": "1.2.0",
-  "main": "src/scripts/main/Main.js",
   "scripts": {
-    "start": "electron .",
-    "build": "electron-builder"
+    "dev": "tauri dev",
+    "build": "tauri build"
   },
   "build": {
     "appId": "com.seuapp.id",
@@ -62,10 +61,9 @@
   "license": "ISC",
   "description": "App to cut frames from videos",
   "devDependencies": {
-    "electron": "^32.1.2",
-    "electron-builder": "^25.1.8"
+    "@tauri-apps/cli": "^1.5.14"
   },
   "dependencies": {
-    "node-7z": "^3.0.0"
+    "@tauri-apps/api": "^1.5.6"
   }
 }

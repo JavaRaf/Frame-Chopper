@@ -1,32 +1,29 @@
 import{ minimize, close, uploadArea, uploadInput, uploadText, uploadImg, generateButton, distInput, fpsInput, qualityInput, checkBoxInput, progressStatus, progressStatusParagraph, progressStatusImg } from '../others/ElementImports.js';
-const { ipcRenderer, webUtils } = require('electron');
-const path = require('path'); 
+
+const { tauri, event, window: tauriWindow, dialog } = window.__TAURI__ || {};
+const invoke = tauri?.invoke;
+const listen = event?.listen;
+const appWindow = tauriWindow?.appWindow;
 
 
 // extract the ffmpeg binaries
 window.onload = async () => {
     try {
-        result = await ipcRenderer.invoke('extract-ffmpeg');
-        console.log(result);
-
+        await invoke('extract_ffmpeg');
     } catch (error) {    
         console.log(error);
     }
 };
 
 
-// Solicita o caminho do arquivo ao processo principal
-ipcRenderer.send('request-file-path');
-
-// Escuta a resposta do caminho do arquivo
-ipcRenderer.on('file-opened', (event, filePath) => {
+// Escuta o arquivo aberto via protocolo/file association
+listen('file-opened', (event) => {
+    const filePath = event.payload;
     if (filePath && filePath.length !== '.') {
-        
         const isVideoSuported = styleInput(filePath);
         if(isVideoSuported) {
             setProps(filePath)
         }
-
     } else {
         console.log("Nenhum arquivo foi recebido ao iniciar.");
     }
@@ -35,11 +32,11 @@ ipcRenderer.on('file-opened', (event, filePath) => {
 
 // minimize and close functionality --------------------------------------------
 minimize.addEventListener('click', () => {
-    ipcRenderer.invoke('window-minimize');
+    appWindow.minimize();
 });
 
 close.addEventListener('click', () => {
-    ipcRenderer.invoke('window-close');
+    appWindow.close();
 });
 
 // init video props
@@ -54,14 +51,15 @@ const videoProps = {
 function setProps(filePath) {
     videoProps.filePath = filePath;
 
-    let distPaste = path.parse(videoProps.filePath).name.match(/\d+/);
+    const baseName = getFileNameWithoutExt(videoProps.filePath);
+    const distPaste = baseName.match(/\d+/);
 
     if (distPaste) {
         videoProps.dist = `EP ${distPaste[0]}`;
         distInput.value =  videoProps.dist;
     }
     else {
-        videoProps.dist = path.parse(videoProps.filePath).name; 
+        videoProps.dist = baseName; 
         distInput.value =  videoProps.dist;
     }
     
@@ -100,9 +98,9 @@ function styleInput(filePath) {
 
     if (VideoExtensions.includes(fileExtension)) {
         uploadArea.style.borderColor = '#007bff';
-        uploadText.innerText = path.basename(filePath);
+        uploadText.innerText = getBaseName(filePath);
         uploadText.style.color = '#007bff';
-        uploadImg.src = path.resolve(__dirname, '../', 'images', 'video-icon.png');
+        uploadImg.src = '../images/video-icon.png';
 
         return true;
     } else {
@@ -122,7 +120,8 @@ function styleInput(filePath) {
 
 // input video -----------------------------------------------------------------
 uploadInput.addEventListener('change', (event) => {
-    const filePath = webUtils.getPathForFile(event.target.files[0]);
+    const file = event.target.files[0];
+    const filePath = file && (file.path || file.name);
     
     const isVideoSuported = styleInput(filePath);
     if(isVideoSuported) {
@@ -152,7 +151,8 @@ uploadArea.addEventListener('dragleave', (event) => {
 uploadArea.addEventListener('drop', (event) => {
     event.preventDefault();
 
-    const filePath = webUtils.getPathForFile(event.dataTransfer.files[0]);
+    const file = event.dataTransfer.files[0];
+    const filePath = file && (file.path || file.name);
     const isVideoSuported = styleInput(filePath);
 
     if(isVideoSuported) {
@@ -178,12 +178,12 @@ generateButton.addEventListener('click', async (event) => {
     videoProps.subtitles = checkBoxInput.checked;
 
     if (videoProps.dist && videoProps.fps && videoProps.quality && videoProps.filePath) {
-        const response = await ipcRenderer.invoke('generate', videoProps)
+        await invoke('generate', videoProps);
     }
 });
 
 // Escutando as atualizações de progresso do FFmpeg
-ipcRenderer.on('ffmpeg-progress', (event, message) => {
+listen('ffmpeg-progress', ({ payload: message }) => {
     progressStatus.style.visibility = 'visible';
 
     const regex = /frame=\s*(\d+)\s.*time=\s*([^\s]+)/;
@@ -198,7 +198,7 @@ ipcRenderer.on('ffmpeg-progress', (event, message) => {
 });
 
 // Escutando a mensagem de status do FFmpeg
-ipcRenderer.on('ffmpeg-status', (event, message) => {
+listen('ffmpeg-status', ({ payload: message }) => {
     console.log(`Status do FFmpeg: ${message}`);
 
     if (message.includes('0')) {
@@ -209,7 +209,7 @@ ipcRenderer.on('ffmpeg-status', (event, message) => {
         setTimeout(() => {
             generateButton.disabled = false;
             progressStatus.style.visibility = 'hidden';
-            ipcRenderer.send('reload-window');
+            window.location.reload();
         }, 3000);
     }
     else {
@@ -218,7 +218,19 @@ ipcRenderer.on('ffmpeg-status', (event, message) => {
     }
 });
 
-progressStatusImg.addEventListener('click', (event) => {
-    ipcRenderer.send('cancel-progress');
+progressStatusImg.addEventListener('click', async (event) => {
+    await invoke('cancel_progress');
     progressStatusParagraph.innerText = 'FramesCutted: 00 \n Video Time: 00:00:00:00';
 });
+
+// Helpers ----------------------------------------------------------------------
+function getBaseName(filePath) {
+    const parts = (filePath || '').split(/[\\/]/);
+    return parts[parts.length - 1] || '';
+}
+
+function getFileNameWithoutExt(filePath) {
+    const base = getBaseName(filePath);
+    const idx = base.lastIndexOf('.');
+    return idx > 0 ? base.substring(0, idx) : base;
+}

@@ -7,12 +7,12 @@
     <title>Frame Chopper</title>
     <link rel="stylesheet" href="../css/styles.css">
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:;">
+        content="default-src 'self'; img-src 'self' data: asset:; script-src 'self' 'unsafe-inline' 'unsafe-eval' tauri: asset:; style-src 'self' 'unsafe-inline';">
 </head>
 
 <body">
 
-    <div class="titlebar">
+    <div class="titlebar" data-tauri-drag-region>
         <div class="title">
             <div class="div-icon">
                 <img src="../images/icon.ico" alt="App-icon">
