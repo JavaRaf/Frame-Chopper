@@ -1,39 +1,35 @@
-import{ minimize, close, uploadArea, uploadInput, uploadText, uploadImg, generateButton, distInput, fpsInput, qualityInput, checkBoxInput, progressStatus, progressStatusParagraph, progressStatusImg } from '../others/ElementImports.js';
+import {
+    minimize, close, uploadArea, uploadInput,
+    uploadText, uploadImg, generateButton, distInput, fpsInput,
+    qualityInput, checkBoxInput, progressStatus, progressStatusParagraph,
+    progressStatusImg, configs
+} from '../others/ElementImports.js';
+
 const { ipcRenderer, webUtils } = require('electron');
-const path = require('path'); 
+const path = require('path');
 
 
-// extract the ffmpeg binaries
-window.onload = async () => {
-    try {
-        result = await ipcRenderer.invoke('extract-ffmpeg');
-        console.log(result);
-
-    } catch (error) {    
-        console.log(error);
-    }
-};
 
 
-// Solicita o caminho do arquivo ao processo principal
+// Ask main process for initial file path (when opened via OS association)
 ipcRenderer.send('request-file-path');
 
-// Escuta a resposta do caminho do arquivo
+// Listen for main process file-opened response
 ipcRenderer.on('file-opened', (event, filePath) => {
     if (filePath && filePath.length !== '.') {
-        
+
         const isVideoSuported = styleInput(filePath);
-        if(isVideoSuported) {
+        if (isVideoSuported) {
             setProps(filePath)
         }
 
     } else {
-        console.log("Nenhum arquivo foi recebido ao iniciar.");
+        console.log("No file was received at startup.");
     }
 });
 
 
-// minimize and close functionality --------------------------------------------
+// Minimize and close functionality --------------------------------------------
 minimize.addEventListener('click', () => {
     ipcRenderer.invoke('window-minimize');
 });
@@ -42,13 +38,20 @@ close.addEventListener('click', () => {
     ipcRenderer.invoke('window-close');
 });
 
-// init video props
+// Open settings window ---------------------------------------------------------
+if (configs) {
+    configs.addEventListener('click', () => {
+        ipcRenderer.invoke('open-settings');
+    });
+}
+
+// Init video props
 const videoProps = {
     filePath: '',
     dist: '',
     subtitles: false,
-    fps: 2,
-    quality: 3
+    fps: 3.5,
+    quality: 1
 }
 
 function setProps(filePath) {
@@ -58,18 +61,18 @@ function setProps(filePath) {
 
     if (distPaste) {
         videoProps.dist = `EP ${distPaste[0]}`;
-        distInput.value =  videoProps.dist;
+        distInput.value = videoProps.dist;
     }
     else {
-        videoProps.dist = path.parse(videoProps.filePath).name; 
-        distInput.value =  videoProps.dist;
+        videoProps.dist = path.parse(videoProps.filePath).name;
+        distInput.value = videoProps.dist;
     }
-    
+
     fpsInput.value = videoProps.fps;
     qualityInput.value = videoProps.quality;
 }
 
-// styles ------------------------------------------
+// Styles helpers ----------------------------------
 function styleInput(filePath) {
 
     const fileExtension = filePath.split('.').pop().toLowerCase();
@@ -93,7 +96,7 @@ function styleInput(filePath) {
         'f4v'
     ];
 
-    // Salvando os estilos originais
+    // Backup original styles
     const originalBorderColor = uploadArea.style.borderColor;
     const originalTextColor = uploadText.style.color;
     const originalInnerText = uploadText.innerText;
@@ -120,20 +123,20 @@ function styleInput(filePath) {
     }
 }
 
-// input video -----------------------------------------------------------------
+// File input change ------------------------------------------------------------
 uploadInput.addEventListener('change', (event) => {
     const filePath = webUtils.getPathForFile(event.target.files[0]);
-    
+
     const isVideoSuported = styleInput(filePath);
-    if(isVideoSuported) {
+    if (isVideoSuported) {
         setProps(filePath)
     }
 
-    // Redefine o valor do input para garantir que o evento change seja disparado novamente
+    // Reset input value to allow repeated change events
     uploadInput.value = '';
 });
 
-// drag and drop functionality -------------------------------------------------
+// Drag and drop functionality -------------------------------------------------
 uploadArea.addEventListener('dragover', (event) => {
     event.preventDefault();
 
@@ -155,20 +158,20 @@ uploadArea.addEventListener('drop', (event) => {
     const filePath = webUtils.getPathForFile(event.dataTransfer.files[0]);
     const isVideoSuported = styleInput(filePath);
 
-    if(isVideoSuported) {
+    if (isVideoSuported) {
         setProps(filePath)
     }
-  
+
 });
 
-// button
+// Generate button
 generateButton.addEventListener('click', async (event) => {
     event.preventDefault();
 
-    if(fpsInput.value < 1 || fpsInput.value > 60) {
+    if (fpsInput.value < 1 || fpsInput.value > 60) {
         fpsInput.value = 2;
     }
-    if(qualityInput.value < 1 || qualityInput.value > 5) {
+    if (qualityInput.value < 1 || qualityInput.value > 5) {
         qualityInput.value = 3;
     }
 
@@ -182,7 +185,7 @@ generateButton.addEventListener('click', async (event) => {
     }
 });
 
-// Escutando as atualizações de progresso do FFmpeg
+// Listen FFmpeg progress updates
 ipcRenderer.on('ffmpeg-progress', (event, message) => {
     progressStatus.style.visibility = 'visible';
 
@@ -197,9 +200,9 @@ ipcRenderer.on('ffmpeg-progress', (event, message) => {
     }
 });
 
-// Escutando a mensagem de status do FFmpeg
+// Listen FFmpeg status message
 ipcRenderer.on('ffmpeg-status', (event, message) => {
-    console.log(`Status do FFmpeg: ${message}`);
+    console.log(`FFmpeg status: ${message}`);
 
     if (message.includes('0')) {
 

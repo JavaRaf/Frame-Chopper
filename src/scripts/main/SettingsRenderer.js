@@ -1,0 +1,63 @@
+// Settings window renderer
+// Purpose: Load and save user default settings through IPC.
+
+const { ipcRenderer } = require('electron');
+
+// Elements
+const minimizeBtn = document.querySelector('#settings-minimize-btn');
+const closeBtn = document.querySelector('#settings-close-btn');
+const settingsFps = document.querySelector('#settings-fps');
+const settingsQuality = document.querySelector('#settings-quality');
+const settingsPattern = document.querySelector('#settings-pattern');
+const settingsSubtitles = document.querySelector('#settings-subtitles');
+const settingsSave = document.querySelector('#settings-save');
+const settingsStatus = document.querySelector('#settings-status');
+
+async function loadSettings() {
+    try {
+        const loaded = await ipcRenderer.invoke('settings-load');
+        settingsFps.value = String(Number(loaded?.fps) || 2);
+        settingsQuality.value = String(Number(loaded?.quality) || 3);
+        settingsPattern.value = String(loaded?.filenamePattern || 'frame_%00d.jpg');
+        settingsSubtitles.checked = Boolean(loaded?.subtitles);
+    } catch (e) {
+        settingsStatus.innerText = 'Failed to load';
+        console.error(e);
+    }
+}
+
+async function saveSettings() {
+    const fps = Number(settingsFps.value || 2);
+    const quality = Number(settingsQuality.value || 3);
+    const subtitles = Boolean(settingsSubtitles.checked);
+    const filenamePattern = String(settingsPattern.value || 'frame_%00d.jpg');
+
+    const { ok } = await ipcRenderer.invoke('settings-save', { fps, quality, subtitles, filenamePattern });
+    if (ok) {
+        settingsStatus.innerText = 'Saved';
+        setTimeout(() => { settingsStatus.innerText = ''; }, 1000);
+    } else {
+        settingsStatus.innerText = 'Error';
+    }
+}
+
+if (settingsSave) {
+    settingsSave.addEventListener('click', saveSettings);
+}
+
+loadSettings();
+
+// Window controls for settings window -----------------------------------------
+if (minimizeBtn) {
+    minimizeBtn.addEventListener('click', () => {
+        ipcRenderer.invoke('settings-window-minimize');
+    });
+}
+
+if (closeBtn) {
+    closeBtn.addEventListener('click', () => {
+        ipcRenderer.invoke('settings-window-close');
+    });
+}
+
+

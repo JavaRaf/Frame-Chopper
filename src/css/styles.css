@@ -69,6 +69,25 @@ body {
     font-weight: 500;
 }
 
+/* Settings gear icon */
+.configs {
+    position: absolute;
+    left: 0px;
+    top: 37px;
+    width: 20px;
+    height: 20px;
+    margin: 6px 8px;
+    -webkit-app-region: no-drag;
+}
+
+.configs img {
+    width: 20px !important;
+    height: 20px !important;
+    display: block;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
 /* Estilo dos botões (minimizar e fechar) */
 .buttons {
     display: flex;
@@ -137,10 +156,9 @@ label {
 
 .upload-area:hover {
     border-color: #007bff;
-
-    p {
-        color: #007bff;
-    }
+}
+.upload-area:hover p {
+    color: #007bff;
 }
 
 .div-p {

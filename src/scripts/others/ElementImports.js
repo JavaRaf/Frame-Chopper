@@ -14,6 +14,9 @@ export const uploadImg = uploadArea.querySelector('img');
 export const minimize = document.querySelector('#minimize-btn');
 export const close = document.querySelector('#close-btn');
 
+// Settings gear
+export const configs = document.querySelector('.configs');
+
 // Inputs type text and number
 export const textNumberInputs = document.querySelectorAll('input[type="text"], input[type="number"]');
 export const destinationFpsInput = document.querySelector('.destination-fps-inputs');
@@ -35,9 +38,7 @@ export const progressStatus = document.querySelector('.progress-status');
 export const progressStatusParagraph = progressStatus.querySelector('p');
 export const progressStatusImg = progressStatus.querySelector('img');
 
-// Subtitle extraction
-export const subtitleExtraction = document.querySelector('.subtitle-extraction');
-export const subtitleCheck = document.querySelector('#subtitle-check');
+// Subtitle extraction (kept minimal exports; checkbox is selected elsewhere)
 
 // Button container
 export const generateButtonContainer = document.querySelector('.generate-button-container');

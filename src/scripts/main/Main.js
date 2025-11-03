@@ -2,16 +2,16 @@ const { ipcMain, app, BrowserWindow } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { spawn } = require('child_process');
-const seven = require('node-7z');
 
 
 let mainWindow;
+let settingsWindow;
 
 function createWindow() {
     // Corrigido: Criação correta da nova instância de BrowserWindow
     mainWindow = new BrowserWindow({
-        width: 350,
-        height: 350,
+        width: 360,
+        height: 370,
         frame: false,
         icon: path.resolve(__dirname, '..', '..', 'images', 'icon.ico'),
         alwaysOnTop: true,
@@ -31,7 +31,7 @@ function createWindow() {
 }
 
 
-// padrao do sistema
+// App ready lifecycle
 app.whenReady().then(() => {
     createWindow();
 
@@ -43,41 +43,14 @@ app.whenReady().then(() => {
 });
 
 
-// quando o app estiver fechado
+// Quit app when all windows are closed
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
     }
 });
 
-let ffmpegPath = path.join(process.resourcesPath, "ffmpeg", "bin", "ffmpeg.exe");
-ipcMain.handle('extract-ffmpeg', async () => {
-    
-    // Verifica se o ffmpeg já foi extraído
-    if (!fs.existsSync(ffmpegPath)) {
-        const sourcePath = path.join(process.resourcesPath,'ffmpeg.7z');
-        const outputPath = path.join(process.resourcesPath, './');
-        
-        // Usando o método correto para extrair com node-7z
-        const extract = seven.extractFull(sourcePath, outputPath, {
-            $progress: true
-        });
 
-        extract.on('progress', (progress) => {
-            console.log(`Progresso: ${progress.percent}%`);
-        });
-
-        extract.on('end', () => {
-            console.log('Extração concluída com sucesso');
-        });
-
-        extract.on('error', (err) => {
-            console.error(`Erro ao extrair: ${err}`);
-        });
-    } else {
-        console.log('ffmpeg já está extraído.');
-    }
-});
 
 ipcMain.on('request-file-path', (event) => {
     const args = process.argv.slice(1); // Ignora o primeiro argumento
@@ -106,13 +79,115 @@ ipcMain.handle('window-close', () => {
     mainWindow.close();
 });
 
-let ffmpegProcess = null; // Variável global para armazenar o processo do FFmpeg
+let ffmpegProcess = null; // Global handler for FFmpeg process
+
+// Settings window and persistence ---------------------------------------------
+const settingsPath = path.join(app.getPath('userData'), 'settings.json');
+
+function readSettings() {
+    try {
+        if (fs.existsSync(settingsPath)) {
+            const content = fs.readFileSync(settingsPath, 'utf-8');
+            return JSON.parse(content);
+        }
+    } catch (err) {
+        console.error('Failed to read settings:', err);
+    }
+    return { fps: 2, quality: 3, subtitles: false, filenamePattern: 'frame_%00d.jpg' };
+}
+
+function writeSettings(settings) {
+    try {
+        fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2), 'utf-8');
+        return true;
+    } catch (err) {
+        console.error('Failed to write settings:', err);
+        return false;
+    }
+}
+
+function openSettingsWindow() {
+    if (settingsWindow && !settingsWindow.isDestroyed()) {
+        settingsWindow.focus();
+        return;
+    }
+
+    settingsWindow = new BrowserWindow({
+        width: 360,
+        height: 370,
+        frame: false, // Custom titlebar; disables the native one
+        resizable: false,
+        minimizable: false,
+        maximizable: false,
+        modal: false,
+        parent: mainWindow,
+        icon: path.resolve(__dirname, '..', '..', 'images', 'icon.ico'),
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false
+        }
+    });
+
+    settingsWindow.setMenu(null);
+    settingsWindow.loadFile(path.resolve(__dirname, '..', '..', 'html', 'settings.html'));
+
+    // Position near the top-right of the main window
+    if (mainWindow && !mainWindow.isDestroyed()) {
+        const parent = mainWindow.getBounds();
+        const desiredWidth = 360;
+        const desiredHeight = 370;
+        const marginRight = 8;
+        const marginTop = 44;
+        const x = Math.max(parent.x + parent.width - desiredWidth - marginRight, 0);
+        const y = Math.max(parent.y + marginTop, 0);
+        settingsWindow.setBounds({ x, y, width: desiredWidth, height: desiredHeight });
+    }
+
+    settingsWindow.on('closed', () => {
+        settingsWindow = null;
+    });
+}
+
+ipcMain.handle('open-settings', () => {
+    openSettingsWindow();
+});
+
+ipcMain.handle('settings-load', () => {
+    return readSettings();
+});
+
+ipcMain.handle('settings-save', (event, payload) => {
+    const safe = {
+        fps: Number(payload?.fps) >= 1 && Number(payload?.fps) <= 60 ? Number(payload.fps) : 2,
+        quality: Number(payload?.quality) >= 1 && Number(payload?.quality) <= 5 ? Number(payload.quality) : 3,
+        subtitles: Boolean(payload?.subtitles),
+        filenamePattern: typeof payload?.filenamePattern === 'string' && payload.filenamePattern.trim() !== ''
+            ? String(payload.filenamePattern).trim()
+            : 'frame_%00d.jpg'
+    };
+    const ok = writeSettings(safe);
+    return { ok };
+});
+
+ipcMain.handle('settings-window-minimize', () => {
+    if (settingsWindow && !settingsWindow.isDestroyed()) {
+        settingsWindow.minimize();
+    }
+});
+
+ipcMain.handle('settings-window-close', () => {
+    if (settingsWindow && !settingsWindow.isDestroyed()) {
+        settingsWindow.close();
+    }
+});
 
 ipcMain.handle('generate', async (event, args) => {
     const { filePath, dist, subtitles, fps, quality } = args;
     const framesDir = path.join(path.dirname(filePath), dist);
+    const currentSettings = readSettings();
+    const filenamePattern = currentSettings?.filenamePattern || 'frame_%00d.jpg';
 
-    // Verifica se o processo já está rodando
+    // Avoid starting another FFmpeg instance while one is running
     if (ffmpegProcess) {
         console.log('FFmpeg já está rodando, aguardando o término.');
         event.sender.send('ffmpeg-status', 'Já está em execução.');
@@ -123,7 +198,7 @@ ipcMain.handle('generate', async (event, args) => {
         extractSubtitle(filePath);
     }
 
-    // Criar o diretório de frames, se não existir
+    // Ensure frames output directory exists
     if (!fs.existsSync(framesDir)) {
         fs.mkdirSync(framesDir, { recursive: true });
         console.log(`Create Frames Directory: ${framesDir}`);
@@ -134,21 +209,35 @@ ipcMain.handle('generate', async (event, args) => {
         '-vf', `fps=${fps}`,                            // Filtro de frames por segundo (FPS)
         '-fps_mode', 'vfr',                             // Sincronização de vídeo variável
         '-q:v', `${quality}`,                           // Qualidade dos frames
-        `${path.join(framesDir, 'frame_%00d.jpg')}`     // Arquivo de saída (frames)
+        `${path.join(framesDir, filenamePattern)}`      // Arquivo de saída (frames)
     ];
 
-    // Inicia o processo do FFmpeg
-    ffmpegProcess = spawn(ffmpegPath, ffmpegArgs);
+
+    // Start FFmpeg process
+    try {
+        ffmpegProcess = spawn("ffmpeg", ffmpegArgs);
+    } catch (err) {
+        console.error('FFmpeg spawn failed:', err);
+        event.sender.send('ffmpeg-status', 'FFmpeg not found. Please install FFmpeg and ensure it is in PATH.');
+        ffmpegProcess = null;
+        return;
+    }
+
+    ffmpegProcess.on('error', (err) => {
+        // ENOENT typically means ffmpeg is not found
+        console.error('FFmpeg process error:', err);
+        event.sender.send('ffmpeg-status', 'FFmpeg not found. Please install FFmpeg and ensure it is in PATH.');
+    });
 
     ffmpegProcess.stderr.on('data', (data) => {
         const message = `stderr: ${data}`;
         console.log(message);
 
-        // Enviar dados de erro para o renderer
+        // Forward stderr to renderer as progress info
         event.sender.send('ffmpeg-progress', message);
     });
 
-    // Quando o processo termina, envia uma mensagem para o renderer
+    // Notify renderer when process finishes
     ffmpegProcess.on('close', (code) => {
         const message = `Processo FFmpeg finalizado com o código ${code}`;
         console.log(message);
@@ -160,45 +249,97 @@ ipcMain.handle('generate', async (event, args) => {
 });
 
 
-function extractSubtitle(filePath) {
-    
+/**
+ * Probe available subtitle streams using ffprobe.
+ * Returns an array of { index: number, language?: string }.
+ */
+function probeSubtitleStreams(filePath) {
+    return new Promise((resolve) => {
+        const args = [
+            '-loglevel', 'error',
+            '-select_streams', 's',
+            '-show_entries', 'stream=index:stream_tags=language',
+            '-of', 'json',
+            filePath
+        ];
+
+        let stdout = '';
+        let stderr = '';
+        let result = [];
+
+        try {
+            const proc = spawn('ffprobe', args);
+
+            proc.stdout.on('data', (data) => { stdout += data.toString(); });
+            proc.stderr.on('data', (data) => { stderr += data.toString(); });
+            proc.on('close', () => {
+                try {
+                    const json = JSON.parse(stdout || '{}');
+                    const streams = Array.isArray(json.streams) ? json.streams : [];
+                    result = streams.map((s) => ({ index: Number(s.index), language: s?.tags?.language })).filter((s) => Number.isFinite(s.index));
+                } catch (e) {
+                    console.error('Failed to parse ffprobe output:', e);
+                }
+                if (result.length === 0) {
+                    // Fallback: try assume at least one subtitle track at index 0
+                    result = [{ index: 0 }];
+                }
+                resolve(result);
+            });
+        } catch (err) {
+            console.error('ffprobe invocation failed, falling back to index 0:', err);
+            resolve([{ index: 0 }]);
+        }
+    });
+}
+
+/**
+ * Extract all subtitle streams from input video.
+ * One .ass file per stream: <basename>_sub<index>_<lang>.ass
+ */
+async function extractSubtitle(filePath) {
     const subsDir = path.join(path.dirname(filePath), 'Subtitles');
     if (!fs.existsSync(subsDir)) {
         fs.mkdirSync(subsDir, { recursive: true });
-        console.log(`Create Subtitles Directory: ${subsDir}`);
+        console.log(`Created Subtitles Directory: ${subsDir}`);
     }
 
-    const outputSubtitlePath = path.join(subsDir, `${path.basename(filePath, path.extname(filePath))}.ass`);
+    // Discover subtitle streams
+    const streams = await probeSubtitleStreams(filePath);
 
-    if (!fs.existsSync(outputSubtitlePath)) {
+    // Spawn one ffmpeg extraction per stream
+    streams.forEach((stream, relativeIdx) => {
+        const baseName = path.basename(filePath, path.extname(filePath));
+        const langSuffix = stream.language ? `_${String(stream.language).toLowerCase()}` : '';
+        const outputSubtitlePath = path.join(subsDir, `${baseName}_sub${stream.index}${langSuffix}.ass`);
+
+        if (fs.existsSync(outputSubtitlePath)) {
+            console.log(`Subtitle already exists, skipping: ${outputSubtitlePath}`);
+            return;
+        }
 
         const subtitleArgs = [
-            '-i', filePath,                                 // Arquivo de entrada (vídeo)
-            '-map', '0:s:m:language:eng',                   // Mapeia a faixa de legendas em inglês (usando idioma)
-            '-c:s', 'ass',                                  // Define o codec de legendas para 'ass'
-            outputSubtitlePath                              // Caminho do arquivo .ass de saída
+            '-y',
+            '-i', filePath,                 // input video
+            '-map', `0:s:${relativeIdx}`,    // map by relative subtitle index (robust across containers)
+            '-c:s', 'ass',                  // convert to ASS
+            outputSubtitlePath
         ];
 
-        // Usando spawn para maior segurança
-        const ffmpegProcess = spawn(ffmpegPath, subtitleArgs);
-
-        ffmpegProcess.stdout.on('data', (data) => {
-            console.log(`stdout: ${data}`);
-        });
-
-        ffmpegProcess.stderr.on('data', (data) => {
-            console.error(`stderr: ${data}`);
-        });
-
-        ffmpegProcess.on('close', (code) => {
-            if (code === 0) {
-                console.log(`Subtitles generated at ${outputSubtitlePath}`);
-            } else {
-                console.error(`Process exited with code: ${code}`);
-            }
-        });
-    }
-
+        try {
+            const p = spawn('ffmpeg', subtitleArgs);
+            p.stderr.on('data', (data) => console.log(`[subs s:${stream.index}] ${data}`));
+            p.on('close', (code) => {
+                if (code === 0) {
+                    console.log(`Subtitle extracted: ${outputSubtitlePath}`);
+                } else {
+                    console.error(`Subtitle extraction failed for stream ${stream.index} (code ${code})`);
+                }
+            });
+        } catch (err) {
+            console.error(`Failed to spawn ffmpeg for subtitle stream ${stream.index}:`, err);
+        }
+    });
 }
 
 ipcMain.on('cancel-progress', () => {
