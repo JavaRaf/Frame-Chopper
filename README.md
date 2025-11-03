@@ -1,7 +1,7 @@
 <h1 align="center">🎥 Frame Chopper</h1>
 
 <div align="center">
-  <img src="./src/images/framechopper.png" alt="Frame Chopper" />
+  <img src="./src/images/Frame-Chopper.png" alt="Frame Chopper" />
 </div>
 
 ## Description

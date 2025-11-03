@@ -16,7 +16,6 @@
 body {
     background-color: #ffffff;
     font-family: 'MinhaFonte';
-    display: flex;
     flex-direction: row;
     min-height: 100vh;
     border-radius: 10px;
