@@ -12,6 +12,10 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     
+    # Permissions needed in case electron-builder tries to publish
+    permissions:
+      contents: read
+    
     # Build for multiple platforms in parallel
     strategy:
       matrix:
@@ -38,8 +42,9 @@ jobs:
       - name: Build application
         run: npm run build
         env:
-          # GitHub token for publishing releases
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Disable automatic publishing by electron-builder
+          # We handle releases through the release job instead
+          PUBLISH: never
       
       - name: Extract version from package.json
         id: get_version

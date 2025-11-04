@@ -12,6 +12,7 @@
     "compression": "maximum",
     "asar": true,
     "electronLanguages": ["en-US"],
+    "publish": null,
     "files": [
       "src/**/*",
       "!**/*.map",
