@@ -87,8 +87,8 @@ The build configuration is located in the `package.json` file under the `build` 
 
 ## 📥 Download
 
-- Windows: download the latest installer (.exe) directly from the Releases page:
-  - [Frame Chopper Setup 1.3.0](https://github.com/JavaRaf/Frame-Chopper/releases/download/1.3.0/Frame.Chopper.Setup.1.3.0.exe)
+- Download the latest installer for your platform directly from the Releases page:
+  - [Frame Chopper Setup releases page](https://github.com/JavaRaf/Frame-Chopper/releases)
 
 ## ✨ Used technologies
 
