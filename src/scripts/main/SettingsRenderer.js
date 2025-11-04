@@ -48,12 +48,6 @@ if (settingsSave) {
 
 loadSettings();
 
-// Window controls for settings window -----------------------------------------
-if (minimizeBtn) {
-    minimizeBtn.addEventListener('click', () => {
-        ipcRenderer.invoke('settings-window-minimize');
-    });
-}
 
 if (closeBtn) {
     closeBtn.addEventListener('click', () => {
