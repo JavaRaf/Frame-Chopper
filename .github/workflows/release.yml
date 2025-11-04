@@ -1,0 +1,135 @@
+name: Release
+
+# Trigger the workflow when a new tag is created
+# The tag should follow semantic versioning (e.g., v1.3.0, 1.4.0)
+on:
+  push:
+    tags:
+      - 'v*'
+      - '*.*.*'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    
+    # Build for multiple platforms in parallel
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+        include:
+          - os: windows-latest
+            platform: win
+          - os: macos-latest
+            platform: mac
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build application
+        run: npm run build
+        env:
+          # GitHub token for publishing releases
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Extract version from package.json
+        id: get_version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION"
+        shell: bash
+      
+      - name: Prepare release artifacts
+        shell: bash
+        run: |
+          # Create a directory for artifacts
+          mkdir -p release-artifacts
+          
+          # Copy built files based on platform
+          if [ "${{ matrix.platform }}" == "win" ]; then
+            # Windows: Copy NSIS installer and related files
+            cp "dist/Frame Chopper Setup ${{ steps.get_version.outputs.version }}.exe" release-artifacts/ || true
+            cp "dist/latest.yml" release-artifacts/ || true
+            # Also copy the blockmap if it exists
+            cp "dist/"*.blockmap release-artifacts/ || true
+          elif [ "${{ matrix.platform }}" == "mac" ]; then
+            # macOS: Copy DMG file
+            cp "dist/"*.dmg release-artifacts/ || true
+            cp "dist/latest.yml" release-artifacts/ || true
+          fi
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform }}-build-${{ steps.get_version.outputs.version }}
+          path: release-artifacts/*
+          retention-days: 30
+  
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref_type == 'tag'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Extract version from package.json
+        id: get_version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extracted version: $VERSION"
+      
+      - name: Download Windows build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: win-build-${{ steps.get_version.outputs.version }}
+          path: ./release-artifacts/win
+      
+      - name: Download macOS build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: mac-build-${{ steps.get_version.outputs.version }}
+          path: ./release-artifacts/mac
+        continue-on-error: true
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ steps.get_version.outputs.version }}
+          body: |
+            ## Frame Chopper ${{ steps.get_version.outputs.version }}
+            
+            ### Changes
+            - See commit history for details
+            
+            ### Downloads
+            - Windows installer available in the assets below
+            - macOS installer available in the assets below (if built)
+            
+            ### Installation
+            1. Download the installer for your platform
+            2. Run the installer and follow the on-screen instructions
+            3. Make sure FFmpeg is installed on your system before using the app
+            
+            **Note**: FFmpeg must be installed separately. See the README for installation instructions.
+          files: |
+            ./release-artifacts/win/*
+            ./release-artifacts/mac/*
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
