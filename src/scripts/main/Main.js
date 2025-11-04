@@ -85,15 +85,25 @@ let ffmpegProcess = null; // Global handler for FFmpeg process
 const settingsPath = path.join(app.getPath('userData'), 'settings.json');
 
 function readSettings() {
+    // Default settings
+    const defaults = { fps: 3.5, quality: 1, subtitles: false, filenamePattern: 'frame_%04d.jpg' };
+    
     try {
         if (fs.existsSync(settingsPath)) {
             const content = fs.readFileSync(settingsPath, 'utf-8');
-            return JSON.parse(content);
+            const parsed = JSON.parse(content);
+            // Merge with defaults to ensure all properties exist
+            return {
+                fps: parsed?.fps ?? defaults.fps,
+                quality: parsed?.quality ?? defaults.quality,
+                subtitles: parsed?.subtitles ?? defaults.subtitles,
+                filenamePattern: parsed?.filenamePattern ?? defaults.filenamePattern
+            };
         }
     } catch (err) {
         console.error('Failed to read settings:', err);
     }
-    return { fps: 2, quality: 3, subtitles: false, filenamePattern: 'frame_%00d.jpg' };
+    return defaults;
 }
 
 function writeSettings(settings) {

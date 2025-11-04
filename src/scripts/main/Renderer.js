@@ -11,6 +11,14 @@ const path = require('path');
 
 
 
+// Load default settings when page loads (wait for DOM to be ready)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadDefaultSettings);
+} else {
+    // DOM is already ready
+    loadDefaultSettings();
+}
+
 // Ask main process for initial file path (when opened via OS association)
 ipcRenderer.send('request-file-path');
 
@@ -54,6 +62,26 @@ const videoProps = {
     quality: 1
 }
 
+// Load default settings from saved configuration
+async function loadDefaultSettings() {
+    try {
+        const settings = await ipcRenderer.invoke('settings-load');
+        // Apply saved settings to initial values
+        if (settings) {
+            videoProps.fps = Number(settings.fps) || videoProps.fps;
+            videoProps.quality = Number(settings.quality) || videoProps.quality;
+            videoProps.subtitles = settings.subtitles === true || settings.subtitles === 'true';
+            
+            // Update UI elements with saved settings (only if elements exist)
+            if (fpsInput) fpsInput.value = videoProps.fps;
+            if (qualityInput) qualityInput.value = videoProps.quality;
+            if (checkBoxInput) checkBoxInput.checked = videoProps.subtitles;
+        }
+    } catch (e) {
+        console.error('Failed to load default settings:', e);
+    }
+}
+
 function setProps(filePath) {
     videoProps.filePath = filePath;
 
@@ -70,6 +98,8 @@ function setProps(filePath) {
 
     fpsInput.value = videoProps.fps;
     qualityInput.value = videoProps.quality;
+    // Update checkbox state when setting props
+    checkBoxInput.checked = videoProps.subtitles;
 }
 
 // Styles helpers ----------------------------------
