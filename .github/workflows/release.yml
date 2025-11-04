@@ -80,9 +80,15 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref_type == 'tag'
     
+    # Permissions needed to create releases
+    permissions:
+      contents: write
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       
       - name: Extract version from package.json
         id: get_version
@@ -103,6 +109,15 @@ jobs:
           name: mac-build-${{ steps.get_version.outputs.version }}
           path: ./release-artifacts/mac
         continue-on-error: true
+      
+      - name: List downloaded artifacts
+        shell: bash
+        run: |
+          echo "Windows artifacts:"
+          ls -la ./release-artifacts/win/ || echo "No Windows artifacts found"
+          echo ""
+          echo "macOS artifacts:"
+          ls -la ./release-artifacts/mac/ || echo "No macOS artifacts found"
       
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -126,8 +141,9 @@ jobs:
             
             **Note**: FFmpeg must be installed separately. See the README for installation instructions.
           files: |
-            ./release-artifacts/win/*
-            ./release-artifacts/mac/*
+            release-artifacts/win/*
+            release-artifacts/mac/*
+          fail_on_unmatched_files: false
           draft: false
           prerelease: false
         env:
