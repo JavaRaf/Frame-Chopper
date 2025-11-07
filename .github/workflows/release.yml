@@ -19,12 +19,14 @@ jobs:
     # Build for multiple platforms in parallel
     strategy:
       matrix:
-        os: [windows-latest, macos-latest]
+        os: [windows-latest, macos-latest, ubuntu-latest]
         include:
           - os: windows-latest
             platform: win
           - os: macos-latest
             platform: mac
+          - os: ubuntu-latest
+            platform: linux
     
     steps:
       - name: Checkout repository
@@ -71,6 +73,10 @@ jobs:
             # macOS: Copy DMG file
             cp "dist/"*.dmg release-artifacts/ || true
             cp "dist/latest.yml" release-artifacts/ || true
+          elif [ "${{ matrix.platform }}" == "linux" ]; then
+            # Linux: Copy AppImage file
+            cp "dist/"*.AppImage release-artifacts/ || true
+            cp "dist/latest.yml" release-artifacts/ || true
           fi
       
       - name: Upload build artifacts
@@ -115,6 +121,13 @@ jobs:
           path: ./release-artifacts/mac
         continue-on-error: true
       
+      - name: Download Linux build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: linux-build-${{ steps.get_version.outputs.version }}
+          path: ./release-artifacts/linux
+        continue-on-error: true
+      
       - name: List downloaded artifacts
         shell: bash
         run: |
@@ -123,7 +136,9 @@ jobs:
           echo ""
           echo "macOS artifacts:"
           ls -la ./release-artifacts/mac/ || echo "No macOS artifacts found"
-      
+          echo ""
+          echo "Linux artifacts:"
+          ls -la ./release-artifacts/linux/ || echo "No Linux artifacts found"
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
@@ -138,7 +153,7 @@ jobs:
             ### Downloads
             - Windows installer available in the assets below
             - macOS installer available in the assets below (if built)
-            
+            - Linux AppImage available in the assets below (if built)
             ### Installation
             1. Download the installer for your platform
             2. Run the installer and follow the on-screen instructions
@@ -148,6 +163,7 @@ jobs:
           files: |
             release-artifacts/win/*
             release-artifacts/mac/*
+            release-artifacts/linux/*
           fail_on_unmatched_files: false
           draft: false
           prerelease: false
