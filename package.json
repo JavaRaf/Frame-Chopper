@@ -7,7 +7,7 @@
     "build": "electron-builder"
   },
   "build": {
-    "appId": "com.seuapp.id",
+    "appId": "com.framechopper.app",
     "productName": "Frame Chopper", 
     "compression": "maximum",
     "asar": true,
@@ -52,6 +52,9 @@
     "mac": {
       "target": "dmg"
     },
+    "linux": {
+      "target": "AppImage"
+    },
     "win": {
       "target": "nsis",
       "icon": "src/images/icon.ico"
@@ -64,8 +67,5 @@
   "devDependencies": {
     "electron": "^32.1.2",
     "electron-builder": "^25.1.8"
-  },
-  "dependencies": {
-    "node-7z": "^3.0.0"
   }
 }
