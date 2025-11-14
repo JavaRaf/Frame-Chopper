@@ -85,24 +85,37 @@ let ffmpegProcess = null; // Global handler for FFmpeg process
 const settingsPath = path.join(app.getPath('userData'), 'settings.json');
 
 function readSettings() {
-    // Default settings
-    const defaults = { fps: 3.5, quality: 1, subtitles: false, filenamePattern: 'frame_%04d.jpg' };
+    // Default settings - these are used for new users when settings file doesn't exist
+    const defaults = { fps: 3.5, quality: 1, subtitles: false, filenamePattern: 'frame_%00d.jpg' };
     
     try {
+        // Only read settings if file exists (file is only created when user explicitly saves)
         if (fs.existsSync(settingsPath)) {
             const content = fs.readFileSync(settingsPath, 'utf-8');
             const parsed = JSON.parse(content);
-            // Merge with defaults to ensure all properties exist
+            // Merge with defaults to ensure all properties exist and validate values
             return {
-                fps: parsed?.fps ?? defaults.fps,
-                quality: parsed?.quality ?? defaults.quality,
-                subtitles: parsed?.subtitles ?? defaults.subtitles,
-                filenamePattern: parsed?.filenamePattern ?? defaults.filenamePattern
+                fps: (parsed?.fps != null && parsed.fps >= 1 && parsed.fps <= 60) ? Number(parsed.fps) : defaults.fps,
+                quality: (parsed?.quality != null && parsed.quality >= 1 && parsed.quality <= 30) ? Number(parsed.quality) : defaults.quality,
+                subtitles: parsed?.subtitles === true || parsed?.subtitles === 'true' ? true : defaults.subtitles,
+                filenamePattern: (typeof parsed?.filenamePattern === 'string' && parsed.filenamePattern.trim() !== '') 
+                    ? String(parsed.filenamePattern).trim() 
+                    : defaults.filenamePattern
             };
         }
     } catch (err) {
+        // If there's any error reading the file, return defaults and log the error
         console.error('Failed to read settings:', err);
+        // Optionally, delete corrupted settings file to start fresh
+        try {
+            if (fs.existsSync(settingsPath)) {
+                fs.unlinkSync(settingsPath);
+            }
+        } catch (unlinkErr) {
+            console.error('Failed to delete corrupted settings file:', unlinkErr);
+        }
     }
+    // Return defaults for new users or when file doesn't exist
     return defaults;
 }
 
@@ -169,7 +182,7 @@ ipcMain.handle('settings-load', () => {
 ipcMain.handle('settings-save', (event, payload) => {
     const safe = {
         fps: Number(payload?.fps) >= 1 && Number(payload?.fps) <= 60 ? Number(payload.fps) : 2,
-        quality: Number(payload?.quality) >= 1 && Number(payload?.quality) <= 5 ? Number(payload.quality) : 3,
+        quality: Number(payload?.quality) >= 1 && Number(payload?.quality) <= 30 ? Number(payload.quality) : 3,
         subtitles: Boolean(payload?.subtitles),
         filenamePattern: typeof payload?.filenamePattern === 'string' && payload.filenamePattern.trim() !== ''
             ? String(payload.filenamePattern).trim()

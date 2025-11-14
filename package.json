@@ -8,10 +8,12 @@
   },
   "build": {
     "appId": "com.framechopper.app",
-    "productName": "Frame Chopper", 
+    "productName": "Frame Chopper",
     "compression": "maximum",
     "asar": true,
-    "electronLanguages": ["en-US"],
+    "electronLanguages": [
+      "en-US"
+    ],
     "publish": null,
     "files": [
       "src/**/*",
@@ -22,7 +24,8 @@
       "!**/docs/**",
       "!**/examples/**",
       "!**/.vscode/**",
-      "!**/node_modules/*/{test,tests,doc,docs,example,examples}/**"
+      "!**/node_modules/*/{test,tests,doc,docs,example,examples}/**",
+      "!**/settings.json"
     ],
     "fileAssociations": [
       {
@@ -55,23 +58,91 @@
     "linux": {
       "target": "AppImage",
       "fileAssociations": [
-        { "ext": "mp4", "name": "Vídeo file", "role": "Viewer" },
-        { "ext": "mkv", "name": "Vídeo file", "role": "Viewer" },
-        { "ext": "avi", "name": "Vídeo file", "role": "Viewer" },
-        { "ext": "mov", "name": "Vídeo file", "role": "Viewer" },
-        { "ext": "wmv", "name": "Vídeo file", "role": "Viewer" },
-        { "ext": "flv", "name": "Vídeo file", "role": "Viewer" },
-        { "ext": "webm", "name": "Vídeo file", "role": "Viewer" },
-        { "ext": "m4v", "name": "Vídeo file", "role": "Viewer" },
-        { "ext": "mpg", "name": "Vídeo file", "role": "Viewer" },
-        { "ext": "mpeg", "name": "Vídeo file", "role": "Viewer" },
-        { "ext": "3gp", "name": "Vídeo file", "role": "Viewer" },
-        { "ext": "ogv", "name": "Vídeo file", "role": "Viewer" },
-        { "ext": "ts", "name": "Vídeo file", "role": "Viewer" },
-        { "ext": "vob", "name": "Vídeo file", "role": "Viewer" },
-        { "ext": "rm", "name": "Vídeo file", "role": "Viewer" },
-        { "ext": "rmvb", "name": "Vídeo file", "role": "Viewer" },
-        { "ext": "f4v", "name": "Vídeo file", "role": "Viewer" }
+        {
+          "ext": "mp4",
+          "name": "Vídeo file",
+          "role": "Viewer"
+        },
+        {
+          "ext": "mkv",
+          "name": "Vídeo file",
+          "role": "Viewer"
+        },
+        {
+          "ext": "avi",
+          "name": "Vídeo file",
+          "role": "Viewer"
+        },
+        {
+          "ext": "mov",
+          "name": "Vídeo file",
+          "role": "Viewer"
+        },
+        {
+          "ext": "wmv",
+          "name": "Vídeo file",
+          "role": "Viewer"
+        },
+        {
+          "ext": "flv",
+          "name": "Vídeo file",
+          "role": "Viewer"
+        },
+        {
+          "ext": "webm",
+          "name": "Vídeo file",
+          "role": "Viewer"
+        },
+        {
+          "ext": "m4v",
+          "name": "Vídeo file",
+          "role": "Viewer"
+        },
+        {
+          "ext": "mpg",
+          "name": "Vídeo file",
+          "role": "Viewer"
+        },
+        {
+          "ext": "mpeg",
+          "name": "Vídeo file",
+          "role": "Viewer"
+        },
+        {
+          "ext": "3gp",
+          "name": "Vídeo file",
+          "role": "Viewer"
+        },
+        {
+          "ext": "ogv",
+          "name": "Vídeo file",
+          "role": "Viewer"
+        },
+        {
+          "ext": "ts",
+          "name": "Vídeo file",
+          "role": "Viewer"
+        },
+        {
+          "ext": "vob",
+          "name": "Vídeo file",
+          "role": "Viewer"
+        },
+        {
+          "ext": "rm",
+          "name": "Vídeo file",
+          "role": "Viewer"
+        },
+        {
+          "ext": "rmvb",
+          "name": "Vídeo file",
+          "role": "Viewer"
+        },
+        {
+          "ext": "f4v",
+          "name": "Vídeo file",
+          "role": "Viewer"
+        }
       ]
     },
     "win": {
@@ -79,10 +150,23 @@
       "icon": "src/images/icon.ico"
     }
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "App to cut frames from videos",
+  "keywords": [
+    "frame extractor",
+    "frame cutter",
+    "frame chopper",
+    "video frames",
+    "extract frames from video",
+    "video to frames",
+    "video frame converter",
+    "subtitle extractor",
+    "ffmpeg",
+    "video processing",
+    "snapshot video",
+    "get stills from video"
+  ],
+  "author": "JavaRaf",
+  "license": "MIT",
+  "description": "App to cut frames from videos with the ability to extract subtitles and set the desired FPS and quality.",
   "devDependencies": {
     "electron": "^32.1.2",
     "electron-builder": "^25.1.8"
