@@ -28,8 +28,9 @@ async function loadSettings() {
 }
 
 async function saveSettings() {
-    const fps = Number(settingsFps.value || 2);
-    const quality = Number(settingsQuality.value || 3);
+    // Convert comma to dot for Brazilian locale support before parsing to number
+    const fps = Number(String(settingsFps.value || 2).replace(',', '.'));
+    const quality = Number(String(settingsQuality.value || 3).replace(',', '.'));
     const subtitles = Boolean(settingsSubtitles.checked);
     const filenamePattern = String(settingsPattern.value || 'frame_%00d.jpg');
 
@@ -40,6 +41,24 @@ async function saveSettings() {
     } else {
         settingsStatus.innerText = 'Error';
     }
+}
+
+// Convert comma to dot in number inputs in real-time (for Brazilian locale support)
+// This ensures the input type="number" accepts the value correctly
+if (settingsFps) {
+    settingsFps.addEventListener('input', (event) => {
+        if (event.target.value.includes(',')) {
+            event.target.value = event.target.value.replace(',', '.');
+        }
+    });
+}
+
+if (settingsQuality) {
+    settingsQuality.addEventListener('input', (event) => {
+        if (event.target.value.includes(',')) {
+            event.target.value = event.target.value.replace(',', '.');
+        }
+    });
 }
 
 if (settingsSave) {
