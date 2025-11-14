@@ -110,7 +110,11 @@ This option allows you to extract subtitles from the video, if the input file co
 
 ## Download
 
-Download the latest release from the [Frame Chopper releases page](https://github.com/JavaRaf/Frame-Chopper/releases).
+* Download the latest release from the [Frame Chopper releases page](https://github.com/JavaRaf/Frame-Chopper/releases).</br>
+<small style="color: gray;"> 
+  <strong>Note:</strong> Remember to install FFmpeg before using the app.
+</small> 
+</br>
 
 **Available formats:**
 - **Windows**: `.exe` installer
