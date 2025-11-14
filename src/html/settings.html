@@ -30,19 +30,20 @@
     <div class="settings-container">
 
         <div class="settings-field">
+
             <label for="settings-fps">Default FPS (1-60)</label>
             <input id="settings-fps" type="number" min="1" max="60" placeholder="2">
         </div>
 
         <div class="settings-field">
-            <label for="settings-quality">Default Quality (1-5)</label>
-            <input id="settings-quality" type="number" min="1" max="5" placeholder="3">
+            <label for="settings-quality">Default Quality (1-30)</label>
+            <input id="settings-quality" type="number" min="1" max="30" placeholder="1">
         </div>
 
         <div class="settings-field">
             <label for="settings-pattern">Frame filename pattern</label>
             <input id="settings-pattern" type="text" placeholder="frame_%00d.jpg">
-            <small style="color: gray;">Use <strong>%d</strong> for the frame number (example: <strong>%02d.jpg</strong> (two digits), <strong>%003d.jpg</strong> (three digits), <strong>%04d.jpg</strong> (four digits), etc.)</small>
+            <small style="color: gray;">Use <strong>%d</strong> fill the frame number (example: <strong>%02d.jpg</strong> (two digits), <strong>%003d.jpg</strong> (three digits) etc...)<br></small>
         </div>
 
         <div class="settings-field checkbox">

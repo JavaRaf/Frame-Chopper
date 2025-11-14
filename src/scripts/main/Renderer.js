@@ -201,8 +201,8 @@ generateButton.addEventListener('click', async (event) => {
     if (fpsInput.value < 1 || fpsInput.value > 60) {
         fpsInput.value = 2;
     }
-    if (qualityInput.value < 1 || qualityInput.value > 5) {
-        qualityInput.value = 3;
+    if (qualityInput.value < 1 || qualityInput.value > 30) {
+            qualityInput.value = 1;
     }
 
     videoProps.dist = distInput.value;
