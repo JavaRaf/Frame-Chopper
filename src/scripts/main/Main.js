@@ -218,7 +218,7 @@ ipcMain.handle('generate', async (event, args) => {
     }
 
     if (subtitles === true) {
-        extractSubtitle(filePath);
+        extractSubtitle(dist, filePath);
     }
 
     // Ensure frames output directory exists
@@ -228,11 +228,20 @@ ipcMain.handle('generate', async (event, args) => {
     }
 
     const ffmpegArgs = [
-        '-i', filePath,                                 // Arquivo de entrada (vídeo)
-        '-vf', `fps=${fps}`,                            // Filtro de frames por segundo (FPS)
-        '-fps_mode', 'vfr',                             // Sincronização de vídeo variável
-        '-q:v', `${quality}`,                           // Qualidade dos frames
-        `${path.join(framesDir, filenamePattern)}`      // Arquivo de saída (frames)
+        '-hwaccel', 'auto',                             // Try to use hardware acceleration if available
+        '-threads', '0',                                // Use all available CPU cores
+        '-thread_type', 'frame',                        // Parallelize frame processing (better multi-core usage)
+        '-i', filePath,                                 // Input video file
+        '-an',                                          // Disable audio stream (not needed for frame extraction)
+        '-sn',                                          // Disable subtitle stream (extracted separately)
+        '-vsync', '0',                                  // Disable frame synchronization (faster, direct frame extraction)
+        '-vf', `fps=${fps}`,                            // FPS filter to extract frames at specified rate
+        '-c:v', 'mjpeg',                                // Use MJPEG codec explicitly (faster JPEG encoding)
+        '-pix_fmt', 'yuvj420p',                        // Pixel format optimized for JPEG (faster conversion)
+        '-q:v', `${quality}`,                           // JPEG quality (1 = best, 31 = worst)
+        '-f', 'image2',                                 // Force image2 format (explicit output format)
+        '-y',                                           // Overwrite output files without asking
+        `${path.join(framesDir, filenamePattern)}`      // Output frames path
     ];
 
 
@@ -320,11 +329,18 @@ function probeSubtitleStreams(filePath) {
  * Extract all subtitle streams from input video.
  * One .ass file per stream: <basename>_sub<index>_<lang>.ass
  */
-async function extractSubtitle(filePath) {
+async function extractSubtitle(dist, filePath) {
     const subsDir = path.join(path.dirname(filePath), 'Subtitles');
     if (!fs.existsSync(subsDir)) {
         fs.mkdirSync(subsDir, { recursive: true });
         console.log(`Created Subtitles Directory: ${subsDir}`);
+    }
+
+    // Create subdirectory with the same name as the frames directory (dist)
+    const subsDistDir = path.join(subsDir, dist);
+    if (!fs.existsSync(subsDistDir)) {
+        fs.mkdirSync(subsDistDir, { recursive: true });
+        console.log(`Created Subtitles Subdirectory: ${subsDistDir}`);
     }
 
     // Discover subtitle streams
@@ -334,7 +350,7 @@ async function extractSubtitle(filePath) {
     streams.forEach((stream, relativeIdx) => {
         const baseName = path.basename(filePath, path.extname(filePath));
         const langSuffix = stream.language ? `_${String(stream.language).toLowerCase()}` : '';
-        const outputSubtitlePath = path.join(subsDir, `${baseName}_sub${stream.index}${langSuffix}.ass`);
+        const outputSubtitlePath = path.join(subsDistDir, `${baseName}_sub${stream.index}${langSuffix}.ass`);
 
         if (fs.existsSync(outputSubtitlePath)) {
             console.log(`Subtitle already exists, skipping: ${outputSubtitlePath}`);
